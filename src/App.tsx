@@ -1,8 +1,23 @@
+import { Header } from "@/components/header"
+import { ThemeProvider, useTheme } from "@/components/theme-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ThemeProvider } from "@/components/theme-provider"
 
-export function App() {
+function AppContent() {
+  const { theme, setTheme } = useTheme()
+  
+  const handleThemeToggle = () => {
+    if (theme === "light") {
+      setTheme("dark")
+    } else if (theme === "dark") {
+      setTheme("light")
+    } else {
+      setTheme("light")
+    }
+  }
+
+  const isDarkMode = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+
   const handlePrimaryClick = () => {
     console.log('Primary button clicked!')
   }
@@ -12,8 +27,8 @@ export function App() {
   }
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="json-viewer-theme">
-      <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
+      <Header onThemeToggle={handleThemeToggle} isDarkMode={isDarkMode} />
         <div className="container mx-auto p-8">
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground mb-2">
@@ -98,7 +113,14 @@ export function App() {
             </CardContent>
           </Card>
         </div>
-      </div>
+    </div>
+  )
+}
+
+export function App() {
+  return (
+    <ThemeProvider defaultTheme="light" storageKey="json-viewer-theme">
+      <AppContent />
     </ThemeProvider>
   )
 }
