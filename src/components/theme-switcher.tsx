@@ -1,28 +1,17 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Zap } from "lucide-react";
+import { useTheme } from "./theme-provider";
 
-type Theme = 'light' | 'dark' | 'cyberpunk';
+type Theme = 'light' | 'dark' | 'system' | 'cyberpunk';
 
 interface ThemeSwitcherProps {
   className?: string;
 }
 
 export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
-  const [theme, setTheme] = useState<Theme>('light');
-
-  const applyTheme = (newTheme: Theme) => {
-    const root = document.documentElement;
-    
-    // Remove all theme classes
-    root.classList.remove('light', 'dark', 'cyberpunk');
-    
-    // Add the new theme class
-    root.classList.add(newTheme);
-    
-    // Store in localStorage
-    localStorage.setItem('json-viewer-theme', newTheme);
-  };
+  const { theme, setTheme: setThemeContext } = useTheme();
+  console.log('🎯 ThemeSwitcher render - current theme:', theme);
 
   const cycleTheme = () => {
     const themes: Theme[] = ['light', 'dark', 'cyberpunk'];
@@ -30,8 +19,8 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
     const nextIndex = (currentIndex + 1) % themes.length;
     const nextTheme = themes[nextIndex];
     
-    setTheme(nextTheme);
-    applyTheme(nextTheme);
+    console.log('🔄 ThemeSwitcher cycling from', theme, 'to', nextTheme);
+    setThemeContext(nextTheme);
   };
 
   const getIcon = () => {
@@ -41,6 +30,8 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
       case 'dark':
         return <Moon className="h-4 w-4" />;
       case 'cyberpunk':
+        return <Zap className="h-4 w-4" />;
+      case 'system':
         return <Zap className="h-4 w-4" />;
     }
   };
@@ -53,23 +44,10 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
         return 'Alternar para modo cyberpunk';
       case 'cyberpunk':
         return 'Alternar para modo claro';
+      case 'system':
+        return 'Alternar para modo claro';
     }
   };
-
-  useEffect(() => {
-    // Load saved theme
-    const savedTheme = localStorage.getItem('json-viewer-theme') as Theme;
-    if (savedTheme && ['light', 'dark', 'cyberpunk'].includes(savedTheme)) {
-      setTheme(savedTheme);
-      applyTheme(savedTheme);
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const defaultTheme = prefersDark ? 'dark' : 'light';
-      setTheme(defaultTheme);
-      applyTheme(defaultTheme);
-    }
-  }, []);
 
   return (
     <Button
