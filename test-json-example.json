@@ -1,0 +1,41 @@
+{
+  "name": "JSON Syntax Highlighting Test",
+  "version": "1.0.0",
+  "features": {
+    "syntax_highlighting": true,
+    "theme_support": true,
+    "color_palettes": [
+      "orange",
+      "amber", 
+      "red",
+      "rose",
+      "blue",
+      "emerald",
+      "violet",
+      "slate"
+    ]
+  },
+  "data_types": {
+    "string": "Hello World",
+    "number": 42,
+    "float": 3.14159,
+    "boolean_true": true,
+    "boolean_false": false,
+    "null_value": null,
+    "array": [1, 2, 3, "test", null, true],
+    "nested_object": {
+      "level": 1,
+      "deep": {
+        "level": 2,
+        "deeper": {
+          "level": 3,
+          "message": "This is deeply nested"
+        }
+      }
+    }
+  },
+  "special_characters": "Special chars: áéíóú, ñ, ç, 中文, 🎨, emoji",
+  "large_number": 9223372036854775807,
+  "scientific_notation": 1.23e-10,
+  "unicode": "\u0048\u0065\u006C\u006C\u006F"
+}

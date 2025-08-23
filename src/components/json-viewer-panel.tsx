@@ -176,20 +176,20 @@ function JsonTree({ data, searchTerm, expandAll, parentKey }: JsonTreeProps) {
     );
 
     if (value === null) {
-      return <span className="text-muted-foreground">null</span>;
+      return <span className="json-null">null</span>;
     }
 
     if (typeof value === 'boolean') {
-      return <span className={value ? "text-green-500" : "text-red-500"}>{String(value)}</span>;
+      return <span className="json-boolean">{String(value)}</span>;
     }
 
     if (typeof value === 'number') {
-      return <span className="text-blue-500">{value}</span>;
+      return <span className="json-number">{value}</span>;
     }
 
     if (typeof value === 'string') {
       return (
-        <span className="text-green-600">
+        <span className="json-string">
           "{shouldHighlight ? <mark className="bg-yellow-200 text-black">{value}</mark> : value}"
         </span>
       );
@@ -203,14 +203,14 @@ function JsonTree({ data, searchTerm, expandAll, parentKey }: JsonTreeProps) {
             onClick={() => toggleExpanded(path)}
             className="flex items-center gap-1 hover:bg-accent rounded px-1"
           >
-            {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+            <span className="json-bracket">{isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}</span>
             <span className="text-muted-foreground">[{value.length} items]</span>
           </button>
           {isExpanded && (
             <div className="ml-4 mt-1">
               {value.map((item, index) => (
                 <div key={index} className="flex items-start gap-2 py-1">
-                  <span className="text-muted-foreground min-w-6">{index}:</span>
+                  <span className="json-key min-w-6">{index}<span className="json-punctuation">:</span></span>
                   {renderValue(item, String(index), `${path}.${index}`)}
                 </div>
               ))}
@@ -231,15 +231,15 @@ function JsonTree({ data, searchTerm, expandAll, parentKey }: JsonTreeProps) {
             onClick={() => toggleExpanded(path)}
             className="flex items-center gap-1 hover:bg-accent rounded px-1"
           >
-            {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+            <span className="json-bracket">{isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}</span>
             <span className="text-muted-foreground">{`{${keys.length} keys}`}</span>
           </button>
           {isExpanded && (
             <div className="ml-4 mt-1">
               {keys.map((objKey) => (
                 <div key={objKey} className="flex items-start gap-2 py-1">
-                  <span className={`font-medium min-w-20 ${shouldHighlight && objKey.toLowerCase().includes(searchTerm.toLowerCase()) ? 'bg-yellow-200 text-black' : 'text-foreground'}`}>
-                    {objKey}:
+                  <span className={`json-key min-w-20 ${shouldHighlight && objKey.toLowerCase().includes(searchTerm.toLowerCase()) ? 'bg-yellow-200 text-black' : ''}`}>
+                    {objKey}<span className="json-punctuation">:</span>
                   </span>
                   {renderValue(obj[objKey], objKey, `${path}.${objKey}`)}
                 </div>
@@ -254,7 +254,7 @@ function JsonTree({ data, searchTerm, expandAll, parentKey }: JsonTreeProps) {
   }, [searchTerm, expandedKeys, toggleExpanded]);
 
   return (
-    <div className="font-mono text-sm">
+    <div className="font-mono text-sm json-highlight">
       {renderValue(data, parentKey || 'root', 'root')}
     </div>
   );

@@ -200,6 +200,99 @@
   body {
     letter-spacing: var(--tracking-normal);
   }
+
+  /* JSON Syntax Highlighting Variables */
+  :root {
+    --json-string: 25 95% 53%;
+    --json-number: 25 95% 45%;
+    --json-boolean: 25 70% 60%;
+    --json-null: var(--muted-foreground);
+    --json-key: var(--foreground);
+    --json-bracket: var(--primary);
+    --json-punctuation: var(--muted-foreground);
+    --json-error: var(--destructive);
+  }
+
+  .dark {
+    --json-string: 25 90% 58%;
+    --json-number: 25 90% 50%;
+    --json-boolean: 25 65% 65%;
+  }
+
+  .cyberpunk {
+    --json-string: 320 100% 70%;
+    --json-number: 320 100% 60%;
+    --json-boolean: 180 100% 70%;
+    --json-bracket: 320 100% 50%;
+  }
+
+  /* Dynamic color theme overrides */
+  [data-color-theme="orange"] {
+    --json-string: 25 95% 53%;
+    --json-number: 25 95% 45%;
+    --json-boolean: 25 70% 60%;
+  }
+
+  [data-color-theme="amber"] {
+    --json-string: 45 95% 53%;
+    --json-number: 45 95% 45%;
+    --json-boolean: 45 70% 60%;
+  }
+
+  [data-color-theme="red"] {
+    --json-string: 0 84% 60%;
+    --json-number: 0 84% 50%;
+    --json-boolean: 0 70% 65%;
+  }
+
+  [data-color-theme="rose"] {
+    --json-string: 330 85% 60%;
+    --json-number: 330 85% 50%;
+    --json-boolean: 330 70% 65%;
+  }
+
+  [data-color-theme="blue"] {
+    --json-string: 221 83% 53%;
+    --json-number: 221 83% 45%;
+    --json-boolean: 221 70% 60%;
+  }
+
+  [data-color-theme="emerald"] {
+    --json-string: 160 84% 39%;
+    --json-number: 160 84% 32%;
+    --json-boolean: 160 70% 45%;
+  }
+
+  [data-color-theme="violet"] {
+    --json-string: 258 90% 66%;
+    --json-number: 258 90% 58%;
+    --json-boolean: 258 70% 70%;
+  }
+
+  [data-color-theme="slate"] {
+    --json-string: 215 25% 27%;
+    --json-number: 215 25% 22%;
+    --json-boolean: 215 20% 35%;
+  }
+
+  /* JSON highlighting classes */
+  .json-string { color: hsl(var(--json-string)); }
+  .json-number { color: hsl(var(--json-number)); }
+  .json-boolean { color: hsl(var(--json-boolean)); }
+  .json-null { color: hsl(var(--json-null)); opacity: 0.7; }
+  .json-key { color: hsl(var(--json-key)); font-weight: 500; }
+  .json-bracket { color: hsl(var(--json-bracket)); font-weight: 600; }
+  .json-punctuation { color: hsl(var(--json-punctuation)); }
+  .json-error { 
+    color: hsl(var(--json-error)); 
+    background: hsl(var(--json-error) / 0.1);
+    text-decoration: underline wavy;
+  }
+
+  /* Smooth transitions */
+  .json-highlight * {
+    transition: color 0.2s ease;
+  }
 }
 
 @layer base {

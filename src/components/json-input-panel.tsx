@@ -2,7 +2,7 @@ import { ColorPalettePicker } from "@/components/color-palette-picker";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { JsonEditor } from "@/components/json-editor";
 import { Braces, Clipboard, FileText, Github, Upload } from "lucide-react";
 import { useRef } from "react";
 
@@ -131,12 +131,11 @@ export function JsonInputPanel({
       </CardHeader>
       
       <CardContent className="flex-1 p-0">
-        <Textarea
+        <JsonEditor
           value={value}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
+          onChange={onChange}
           placeholder="Paste your JSON here or use the buttons above..."
-          className="h-full w-full resize-none border-0 rounded-none font-mono text-sm bg-background text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
-          style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace' }}
+          className="h-full w-full border-0 rounded-none"
         />
         
         <input
