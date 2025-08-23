@@ -1,5 +1,5 @@
 import { ColorPalettePicker } from "@/components/color-palette-picker";
-import { JsonEditor } from "@/components/json-editor";
+import { SimpleJsonEditor } from "@/components/simple-json-editor";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -128,7 +128,7 @@ title="Paste from Clipboard"
 </div>
 </CardHeader>
 <CardContent className="flex-1 p-0">
-<JsonEditor
+<SimpleJsonEditor
 value={value}
 onChange={onChange}
 placeholder="Paste your JSON here or use the buttons above..."

@@ -75,14 +75,30 @@ function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData 
     selection: isDark ? '#264f78' : '#0969da'
   };
 
-  console.log('Monaco Editor Theme Applied:', {
-    colorTheme: document.documentElement.getAttribute('data-color-theme'),
+  // More detailed debugging
+  console.group('🎨 Monaco Editor Theme Debug');
+  console.log('Theme Detection:', {
+    currentTheme: theme,
     isDark,
-    cssBackground: style.getPropertyValue('--background').trim(),
-    parsedBackground: backgroundHsl,
-    finalBackground: baseColors.background,
-    allColors: baseColors
+    colorTheme: document.documentElement.getAttribute('data-color-theme'),
+    documentClasses: document.documentElement.className
   });
+  
+  console.log('CSS Variables Raw:', {
+    background: style.getPropertyValue('--background'),
+    foreground: style.getPropertyValue('--foreground'),
+    primary: style.getPropertyValue('--primary'),
+    mutedForeground: style.getPropertyValue('--muted-foreground')
+  });
+  
+  console.log('Parsed HSL Values:', {
+    backgroundHsl,
+    foregroundHsl,
+    mutedHsl
+  });
+  
+  console.log('Final Monaco Colors:', baseColors);
+  console.groupEnd();
 
   return {
     base: isDark ? 'vs-dark' : 'vs',
@@ -119,18 +135,24 @@ export function JsonEditor({ value, onChange, placeholder, className }: JsonEdit
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [isEditorReady, setIsEditorReady] = useState(false);
 
+  console.log('JsonEditor rendered with theme:', theme);
+
   useEffect(() => {
     if (isEditorReady) {
       try {
+        console.log('🔄 Applying Monaco theme...');
         const isDark = theme === 'dark' || theme === 'cyberpunk';
         const customTheme = createCustomTheme(isDark);
         monaco.editor.defineTheme('json-viewer-theme', customTheme);
         monaco.editor.setTheme('json-viewer-theme');
+        console.log('✅ Monaco theme applied successfully');
       } catch (error) {
-        console.warn('Error applying Monaco theme:', error);
+        console.error('❌ Error applying Monaco theme:', error);
         // Fallback to default theme
         monaco.editor.setTheme(theme === 'dark' || theme === 'cyberpunk' ? 'vs-dark' : 'vs');
       }
+    } else {
+      console.log('⏳ Monaco editor not ready yet...');
     }
   }, [theme, isEditorReady]);
 
