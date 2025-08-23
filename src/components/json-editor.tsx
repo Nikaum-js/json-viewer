@@ -11,94 +11,56 @@ interface JsonEditorProps {
 }
 
 
-function getColorThemePalette(): { primary: string; secondary: string } {
-  const theme = document.documentElement.getAttribute('data-color-theme') || 'orange';
+function getPrimaryColor(): string {
+  // Get primary color from CSS variable (now in hex format)
+  const root = document.documentElement;
+  const style = getComputedStyle(root);
   
-  const palettes = {
-    orange: { primary: '#e36209', secondary: '#f97516' },
-    amber: { primary: '#d97706', secondary: '#f59e0b' },
-    red: { primary: '#dc2626', secondary: '#ef4444' },
-    rose: { primary: '#e11d48', secondary: '#f43f5e' },
-    blue: { primary: '#2563eb', secondary: '#3b82f6' },
-    emerald: { primary: '#059669', secondary: '#10b981' },
-    violet: { primary: '#7c3aed', secondary: '#8b5cf6' },
-    slate: { primary: '#475569', secondary: '#64748b' },
-  };
+  const primaryValue = style.getPropertyValue('--primary').trim();
   
-  return palettes[theme as keyof typeof palettes] || palettes.orange;
-}
-
-function hslToHex(h: number, s: number, l: number): string {
-  l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
-  const f = (n: number) => {
-    const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, '0');
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
+  // Return the hex color directly (our new format)
+  if (primaryValue && primaryValue.startsWith('#')) {
+    return primaryValue;
+  }
+  
+  // Fallback primary color
+  return '#d87943';
 }
 
 function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData {
-  const colorPalette = getColorThemePalette();
+  const primaryColor = getPrimaryColor();
   
   // Get actual theme colors from CSS variables
   const root = document.documentElement;
   const style = getComputedStyle(root);
   
-  const parseHslValue = (property: string): { h: number; s: number; l: number } | null => {
+  const getHexColor = (property: string): string => {
     const value = style.getPropertyValue(property).trim();
-    if (value) {
-      // Handle "220 17% 93%" format
-      const parts = value.replace(/%/g, '').split(/\s+/);
-      if (parts.length >= 3) {
-        return {
-          h: parseInt(parts[0]) || 0,
-          s: parseInt(parts[1]) || 0,
-          l: parseInt(parts[2]) || 50
-        };
-      }
+    // Return hex color directly (our new format)
+    if (value && value.startsWith('#')) {
+      return value;
     }
-    return null;
+    return '';
   };
 
-  const backgroundHsl = parseHslValue('--background');
-  const foregroundHsl = parseHslValue('--foreground');  
-  const mutedHsl = parseHslValue('--muted-foreground');
-
+  const backgroundColor = getHexColor('--background');
+  const foregroundColor = getHexColor('--foreground');
+  const mutedColor = getHexColor('--muted-foreground');
+  
   const baseColors = {
-    background: backgroundHsl ? hslToHex(backgroundHsl.h, backgroundHsl.s, backgroundHsl.l) : (isDark ? '#0d1117' : '#ffffff'),
-    foreground: foregroundHsl ? hslToHex(foregroundHsl.h, foregroundHsl.s, foregroundHsl.l) : (isDark ? '#e6edf3' : '#24292f'),
-    primary: colorPalette.primary,
-    secondary: colorPalette.secondary,
-    muted: mutedHsl ? hslToHex(mutedHsl.h, mutedHsl.s, mutedHsl.l) : (isDark ? '#6e7681' : '#656d76'),
+    background: backgroundColor || (isDark ? '#121113' : '#ffffff'),
+    foreground: foregroundColor || (isDark ? '#c1c1c1' : '#111827'),
+    primary: primaryColor,
+    muted: mutedColor || (isDark ? '#888888' : '#6b7280'),
     selection: isDark ? '#264f78' : '#0969da'
   };
 
-  // More detailed debugging
-  console.group('🎨 Monaco Editor Theme Debug');
-  console.log('Theme Detection:', {
-    currentTheme: theme,
+  // Debug log to verify colors
+  console.log('Monaco Editor Colors:', {
     isDark,
-    colorTheme: document.documentElement.getAttribute('data-color-theme'),
-    documentClasses: document.documentElement.className
+    backgroundColor,
+    baseColors
   });
-  
-  console.log('CSS Variables Raw:', {
-    background: style.getPropertyValue('--background'),
-    foreground: style.getPropertyValue('--foreground'),
-    primary: style.getPropertyValue('--primary'),
-    mutedForeground: style.getPropertyValue('--muted-foreground')
-  });
-  
-  console.log('Parsed HSL Values:', {
-    backgroundHsl,
-    foregroundHsl,
-    mutedHsl
-  });
-  
-  console.log('Final Monaco Colors:', baseColors);
-  console.groupEnd();
 
   return {
     base: isDark ? 'vs-dark' : 'vs',
@@ -135,24 +97,18 @@ export function JsonEditor({ value, onChange, placeholder, className }: JsonEdit
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [isEditorReady, setIsEditorReady] = useState(false);
 
-  console.log('JsonEditor rendered with theme:', theme);
-
   useEffect(() => {
     if (isEditorReady) {
       try {
-        console.log('🔄 Applying Monaco theme...');
         const isDark = theme === 'dark' || theme === 'cyberpunk';
         const customTheme = createCustomTheme(isDark);
         monaco.editor.defineTheme('json-viewer-theme', customTheme);
         monaco.editor.setTheme('json-viewer-theme');
-        console.log('✅ Monaco theme applied successfully');
       } catch (error) {
-        console.error('❌ Error applying Monaco theme:', error);
+        console.warn('Error applying Monaco theme:', error);
         // Fallback to default theme
         monaco.editor.setTheme(theme === 'dark' || theme === 'cyberpunk' ? 'vs-dark' : 'vs');
       }
-    } else {
-      console.log('⏳ Monaco editor not ready yet...');
     }
   }, [theme, isEditorReady]);
 
@@ -175,7 +131,7 @@ export function JsonEditor({ value, onChange, placeholder, className }: JsonEdit
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-color-theme', 'class']
+      attributeFilter: ['class']
     });
 
     return () => observer.disconnect();

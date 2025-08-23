@@ -1,4 +1,3 @@
-import { ColorPalettePicker } from "@/components/color-palette-picker";
 import { SimpleJsonEditor } from "@/components/simple-json-editor";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
@@ -76,7 +75,6 @@ rel="noopener noreferrer"
 <span className="sr-only">GitHub</span>
 </a>
 </Button>
-<ColorPalettePicker />
 <ThemeSwitcher />
 </div>
 </div>

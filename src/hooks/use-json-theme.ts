@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useTheme } from "@/components/theme-provider";
 
 export interface JsonThemeColors {
@@ -14,75 +14,49 @@ export interface JsonThemeColors {
 
 export function useJsonTheme() {
   const { theme } = useTheme();
-  const [colorTheme, setColorTheme] = useState<string>('orange');
 
-  const getJsonColors = useCallback((themeName: string, isDark: boolean): JsonThemeColors => {
-    // Get computed colors from CSS variables
+  const getJsonColors = useCallback((isDark: boolean): JsonThemeColors => {
+    // Get computed colors from CSS variables (now in hex format)
     const root = document.documentElement;
     const style = getComputedStyle(root);
     
-    const getHSL = (property: string): string => {
+    const getColor = (property: string): string => {
       const value = style.getPropertyValue(property).trim();
-      return `hsl(${value})`;
+      // Return hex color directly
+      return value || '#000000';
     };
 
     return {
-      string: getHSL('--json-string'),
-      number: getHSL('--json-number'),
-      boolean: getHSL('--json-boolean'),
-      null: getHSL('--json-null'),
-      key: getHSL('--json-key'),
-      bracket: getHSL('--json-bracket'),
-      punctuation: getHSL('--json-punctuation'),
-      error: getHSL('--json-error'),
+      string: getColor('--json-string'),
+      number: getColor('--json-number'),
+      boolean: getColor('--json-boolean'),
+      null: getColor('--json-null'),
+      key: getColor('--json-key'),
+      bracket: getColor('--json-bracket'),
+      punctuation: getColor('--json-punctuation'),
+      error: getColor('--json-error'),
     };
   }, []);
 
   const updateJsonColors = useCallback(() => {
     const isDark = theme === 'dark' || theme === 'cyberpunk';
-    const colors = getJsonColors(colorTheme, isDark);
+    const colors = getJsonColors(isDark);
     
     // Trigger a custom event to notify other components about color changes
     const event = new CustomEvent('json-theme-change', { 
-      detail: { colors, colorTheme, isDark } 
+      detail: { colors, isDark } 
     });
     window.dispatchEvent(event);
-  }, [colorTheme, theme, getJsonColors]);
-
-  useEffect(() => {
-    // Listen for color theme changes from ColorPalettePicker
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'data-color-theme') {
-          const newTheme = document.documentElement.getAttribute('data-color-theme');
-          if (newTheme && newTheme !== colorTheme) {
-            setColorTheme(newTheme);
-          }
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-color-theme']
-    });
-
-    // Get initial color theme
-    const initialTheme = document.documentElement.getAttribute('data-color-theme') || 'orange';
-    setColorTheme(initialTheme);
-
-    return () => observer.disconnect();
-  }, [colorTheme]);
+  }, [theme, getJsonColors]);
 
   useEffect(() => {
     updateJsonColors();
   }, [updateJsonColors]);
 
   return {
-    colorTheme,
     theme,
     isDark: theme === 'dark' || theme === 'cyberpunk',
-    getJsonColors: () => getJsonColors(colorTheme, theme === 'dark' || theme === 'cyberpunk'),
+    getJsonColors: () => getJsonColors(theme === 'dark' || theme === 'cyberpunk'),
     updateJsonColors,
   };
 }

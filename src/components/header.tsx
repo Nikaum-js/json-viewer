@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { ColorPalettePicker } from "@/components/color-palette-picker";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { Button } from "@/components/ui/button";
 import { Braces, Github } from "lucide-react";
 
 export function Header() {
@@ -44,7 +43,6 @@ export function Header() {
             </a>
           </Button>
 
-          <ColorPalettePicker />
 
           <ThemeSwitcher />
         </div>

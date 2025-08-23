@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronDown, ChevronRight, Download, Expand, Minimize } from "lucide-react";
+import { ChevronDown, ChevronRight, Download, Expand, Minimize, Search } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 interface JsonViewerPanelProps {
   data: unknown;
@@ -38,7 +38,7 @@ export function JsonViewerPanel({
   }, []);
 
   return (
-    <Card className="h-full flex flex-col border-0 rounded-none bg-card">
+    <Card className="h-full flex flex-col border-0 rounded-none bg-card pt-3">
       {/* Empty header for alignment with main header */}
       <CardHeader className="border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90">
         <div className="flex items-center justify-end py-2">
