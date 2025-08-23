@@ -1,16 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ColorPalettePicker } from "@/components/color-palette-picker";
-import { Braces, Github, Moon, Sun } from "lucide-react";
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { Braces, Github } from "lucide-react";
 
-interface HeaderProps {
-  onThemeToggle: () => void;
-  isDarkMode: boolean;
-}
+interface HeaderProps {}
 
-export function Header({ onThemeToggle, isDarkMode }: HeaderProps) {
-  const handleThemeToggle = () => {
-    onThemeToggle();
-  };
+export function Header() {
 
 
   return (
@@ -53,20 +48,7 @@ export function Header({ onThemeToggle, isDarkMode }: HeaderProps) {
 
           <ColorPalettePicker />
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleThemeToggle}
-            className="h-10 w-10"
-            title={isDarkMode ? "Alternar para modo claro" : "Alternar para modo escuro"}
-          >
-            {isDarkMode ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            )}
-            <span className="sr-only">Alternar tema</span>
-          </Button>
+          <ThemeSwitcher />
         </div>
       </div>
     </header>

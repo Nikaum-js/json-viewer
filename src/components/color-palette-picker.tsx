@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Palette } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ColorPalettePickerProps {
   className?: string;
@@ -24,10 +24,10 @@ const COLOR_THEMES: ColorTheme[] = [
     preview: '#e36209'
   },
   {
-    name: 'yellow',
-    primary: '#f59e0b',
-    primaryDark: '#fbbf24',
-    preview: '#f59e0b'
+    name: 'amber',
+    primary: '#d97706',
+    primaryDark: '#f59e0b',
+    preview: '#d97706'
   },
   {
     name: 'red', 
@@ -36,10 +36,34 @@ const COLOR_THEMES: ColorTheme[] = [
     preview: '#dc2626'
   },
   {
-    name: 'pink',
+    name: 'rose',
     primary: '#e11d48',
-    primaryDark: '#ec4899', 
+    primaryDark: '#f43f5e', 
     preview: '#e11d48'
+  },
+  {
+    name: 'blue',
+    primary: '#2563eb',
+    primaryDark: '#3b82f6', 
+    preview: '#2563eb'
+  },
+  {
+    name: 'emerald',
+    primary: '#059669',
+    primaryDark: '#10b981', 
+    preview: '#059669'
+  },
+  {
+    name: 'violet',
+    primary: '#7c3aed',
+    primaryDark: '#8b5cf6', 
+    preview: '#7c3aed'
+  },
+  {
+    name: 'slate',
+    primary: '#475569',
+    primaryDark: '#64748b', 
+    preview: '#475569'
   }
 ];
 
@@ -121,23 +145,33 @@ export function ColorPalettePicker({ className, currentTheme = 'orange', onTheme
           <span className="sr-only">Paleta de cores</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-32 p-3" align="end">
-        <div className="grid grid-cols-2 gap-3">
-          {COLOR_THEMES.map((theme) => (
-            <button
-              key={theme.name}
-              onClick={() => handleColorChange(theme.name)}
-              className={`
-                w-10 h-10 rounded-full border-2 transition-all duration-200 
-                ${activeTheme === theme.name 
-                  ? 'border-foreground scale-110 shadow-lg' 
-                  : 'border-border hover:border-foreground/50 hover:scale-105'
-                }
-              `}
-              style={{ backgroundColor: theme.preview }}
-              title={`Tema ${theme.name}`}
-            />
-          ))}
+      <PopoverContent className="w-48 p-4 bg-background/95 backdrop-blur-sm border border-border/50 shadow-xl" align="end">
+        <div className="space-y-3">
+          <div className="text-xs font-medium text-muted-foreground text-center">
+            Escolha uma cor
+          </div>
+          <div className="grid grid-cols-4 gap-3 place-items-center">
+            {COLOR_THEMES.map((theme) => (
+              <button
+                key={theme.name}
+                onClick={() => handleColorChange(theme.name)}
+                className={`
+                  relative w-6 h-6 rounded-full transition-all duration-300 ease-out
+                  ${activeTheme === theme.name 
+                    ? 'scale-125 shadow-lg' 
+                    : 'hover:scale-110 hover:shadow-md'
+                  }
+                `}
+                style={{ backgroundColor: theme.preview }}
+                title={`Tema ${theme.name}`}
+              >
+                {activeTheme === theme.name && (
+                  <div className="absolute inset-0 rounded-full border-2 border-background shadow-[0_0_0_2px_currentColor] animate-pulse" />
+                )}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 to-transparent" />
+              </button>
+            ))}
+          </div>
         </div>
       </PopoverContent>
     </Popover>
