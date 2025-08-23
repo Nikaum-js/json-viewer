@@ -31,21 +31,53 @@ function getColorThemePalette(): { primary: string; secondary: string } {
 function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData {
   const colorPalette = getColorThemePalette();
   
-  const baseColors = isDark ? {
-    background: '#0d1117',
-    foreground: '#e6edf3',
+  // Get actual theme colors from CSS variables
+  const root = document.documentElement;
+  const style = getComputedStyle(root);
+  
+  const getHslColor = (property: string) => {
+    const value = style.getPropertyValue(property).trim();
+    if (value) {
+      // Convert "220 17% 93%" format to "hsl(220, 17%, 93%)"
+      const parts = value.split(/\s+/);
+      if (parts.length >= 3) {
+        return `hsl(${parts[0]}, ${parts[1]}, ${parts[2]})`;
+      }
+    }
+    return null;
+  };
+
+  const hslToHex = (hsl: string): string => {
+    // Simple conversion - Monaco needs hex colors
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = hsl;
+      return ctx.fillStyle;
+    }
+    return isDark ? '#1e1e1e' : '#ffffff';
+  };
+
+  const backgroundHsl = getHslColor('--background');
+  const foregroundHsl = getHslColor('--foreground');
+  const mutedHsl = getHslColor('--muted-foreground');
+  
+  const baseColors = {
+    background: backgroundHsl ? hslToHex(backgroundHsl) : (isDark ? '#1e1e1e' : '#ffffff'),
+    foreground: foregroundHsl ? hslToHex(foregroundHsl) : (isDark ? '#e6edf3' : '#24292f'),
     primary: colorPalette.primary,
     secondary: colorPalette.secondary,
-    muted: '#6e7681',
-    selection: '#264f78'
-  } : {
-    background: '#ffffff',
-    foreground: '#24292f',
-    primary: colorPalette.primary, 
-    secondary: colorPalette.secondary,
-    muted: '#656d76',
-    selection: '#0969da'
+    muted: mutedHsl ? hslToHex(mutedHsl) : (isDark ? '#6e7681' : '#656d76'),
+    selection: isDark ? '#264f78' : '#0969da'
   };
+
+  // Debug log to verify colors
+  console.log('Monaco Editor Colors:', {
+    theme: document.documentElement.getAttribute('data-color-theme'),
+    isDark,
+    backgroundHsl,
+    baseColors
+  });
 
   return {
     base: isDark ? 'vs-dark' : 'vs',
@@ -63,12 +95,16 @@ function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData 
     colors: {
       'editor.background': baseColors.background,
       'editor.foreground': baseColors.foreground,
-      'editor.lineHighlightBackground': isDark ? '#161b22' : '#f6f8fa',
-      'editor.selectionBackground': baseColors.selection + '40',
-      'editor.inactiveSelectionBackground': baseColors.selection + '20',
+      'editor.lineHighlightBackground': baseColors.background === '#ffffff' ? '#f8f9fa' : 
+                                        baseColors.background === '#1e1e1e' ? '#2d2d2d' : 
+                                        baseColors.background + '40',
+      'editor.selectionBackground': baseColors.primary + '40',
+      'editor.inactiveSelectionBackground': baseColors.primary + '20',
       'editorLineNumber.foreground': baseColors.muted,
       'editorLineNumber.activeForeground': baseColors.foreground,
       'editorCursor.foreground': baseColors.primary,
+      'editorWidget.background': baseColors.background,
+      'editorWidget.border': baseColors.muted + '40',
     }
   };
 }
