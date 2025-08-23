@@ -1,6 +1,6 @@
-import { useRef, useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "./theme-provider";
 
 interface JsonEditorProps {
@@ -28,6 +28,17 @@ function getColorThemePalette(): { primary: string; secondary: string } {
   return palettes[theme as keyof typeof palettes] || palettes.orange;
 }
 
+function hslToHex(h: number, s: number, l: number): string {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
 function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData {
   const colorPalette = getColorThemePalette();
   
@@ -35,48 +46,42 @@ function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData 
   const root = document.documentElement;
   const style = getComputedStyle(root);
   
-  const getHslColor = (property: string) => {
+  const parseHslValue = (property: string): { h: number; s: number; l: number } | null => {
     const value = style.getPropertyValue(property).trim();
     if (value) {
-      // Convert "220 17% 93%" format to "hsl(220, 17%, 93%)"
-      const parts = value.split(/\s+/);
+      // Handle "220 17% 93%" format
+      const parts = value.replace(/%/g, '').split(/\s+/);
       if (parts.length >= 3) {
-        return `hsl(${parts[0]}, ${parts[1]}, ${parts[2]})`;
+        return {
+          h: parseInt(parts[0]) || 0,
+          s: parseInt(parts[1]) || 0,
+          l: parseInt(parts[2]) || 50
+        };
       }
     }
     return null;
   };
 
-  const hslToHex = (hsl: string): string => {
-    // Simple conversion - Monaco needs hex colors
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = hsl;
-      return ctx.fillStyle;
-    }
-    return isDark ? '#1e1e1e' : '#ffffff';
-  };
+  const backgroundHsl = parseHslValue('--background');
+  const foregroundHsl = parseHslValue('--foreground');  
+  const mutedHsl = parseHslValue('--muted-foreground');
 
-  const backgroundHsl = getHslColor('--background');
-  const foregroundHsl = getHslColor('--foreground');
-  const mutedHsl = getHslColor('--muted-foreground');
-  
   const baseColors = {
-    background: backgroundHsl ? hslToHex(backgroundHsl) : (isDark ? '#1e1e1e' : '#ffffff'),
-    foreground: foregroundHsl ? hslToHex(foregroundHsl) : (isDark ? '#e6edf3' : '#24292f'),
+    background: backgroundHsl ? hslToHex(backgroundHsl.h, backgroundHsl.s, backgroundHsl.l) : (isDark ? '#0d1117' : '#ffffff'),
+    foreground: foregroundHsl ? hslToHex(foregroundHsl.h, foregroundHsl.s, foregroundHsl.l) : (isDark ? '#e6edf3' : '#24292f'),
     primary: colorPalette.primary,
     secondary: colorPalette.secondary,
-    muted: mutedHsl ? hslToHex(mutedHsl) : (isDark ? '#6e7681' : '#656d76'),
+    muted: mutedHsl ? hslToHex(mutedHsl.h, mutedHsl.s, mutedHsl.l) : (isDark ? '#6e7681' : '#656d76'),
     selection: isDark ? '#264f78' : '#0969da'
   };
 
-  // Debug log to verify colors
-  console.log('Monaco Editor Colors:', {
-    theme: document.documentElement.getAttribute('data-color-theme'),
+  console.log('Monaco Editor Theme Applied:', {
+    colorTheme: document.documentElement.getAttribute('data-color-theme'),
     isDark,
-    backgroundHsl,
-    baseColors
+    cssBackground: style.getPropertyValue('--background').trim(),
+    parsedBackground: backgroundHsl,
+    finalBackground: baseColors.background,
+    allColors: baseColors
   });
 
   return {
