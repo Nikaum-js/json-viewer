@@ -3,8 +3,6 @@ import { ColorPalettePicker } from "@/components/color-palette-picker";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Braces, Github } from "lucide-react";
 
-interface HeaderProps {}
-
 export function Header() {
 
 
