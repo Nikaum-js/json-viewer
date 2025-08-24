@@ -1,7 +1,15 @@
-import Editor from "@monaco-editor/react";
-import * as monaco from "monaco-editor";
+import Editor, { loader } from "@monaco-editor/react";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "./theme-provider";
+
+// ---
+// Configuração do loader para carregar apenas o essencial de um CDN.
+loader.config({
+  paths: {
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.49.0/min/vs',
+  },
+});
+// ---
 
 interface JsonEditorProps {
   value: string;
@@ -10,33 +18,27 @@ interface JsonEditorProps {
   className?: string;
 }
 
-
+// Funções de tema movidas para fora do componente para evitar recriação
 function getPrimaryColor(): string {
-  // Get primary color from CSS variable (now in hex format)
   const root = document.documentElement;
   const style = getComputedStyle(root);
   
   const primaryValue = style.getPropertyValue('--primary').trim();
   
-  // Return the hex color directly (our new format)
   if (primaryValue && primaryValue.startsWith('#')) {
     return primaryValue;
   }
   
-  // Fallback primary color
   return '#d87943';
 }
 
-function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData {
+function createCustomTheme(isDark: boolean): any {
   const primaryColor = getPrimaryColor();
-  
-  // Get actual theme colors from CSS variables
   const root = document.documentElement;
   const style = getComputedStyle(root);
   
   const getHexColor = (property: string): string => {
     const value = style.getPropertyValue(property).trim();
-    // Return hex color directly (our new format)
     if (value && value.startsWith('#')) {
       return value;
     }
@@ -87,37 +89,38 @@ function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData 
 
 export function JsonEditor({ value, onChange, placeholder, className }: JsonEditorProps) {
   const { theme } = useTheme();
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const editorRef = useRef<any | null>(null);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  // Salvamos a instância do Monaco para poder usá-la em outros lugares
+  const [monacoInstance, setMonacoInstance] = useState<any | null>(null);
 
+  // UseEffect para aplicar o tema quando o editor e o tema estiverem prontos
   useEffect(() => {
-    if (isEditorReady) {
+    if (isEditorReady && monacoInstance) {
       try {
         const isDark = theme === 'dark' || theme === 'cyberpunk';
         const customTheme = createCustomTheme(isDark);
-        monaco.editor.defineTheme('json-viewer-theme', customTheme);
-        monaco.editor.setTheme('json-viewer-theme');
+        // Usamos a instância salva para definir o tema
+        monacoInstance.editor.defineTheme('json-viewer-theme', customTheme);
+        monacoInstance.editor.setTheme('json-viewer-theme');
       } catch (error) {
         console.warn('Error applying Monaco theme:', error);
-        // Fallback to default theme
-        monaco.editor.setTheme(theme === 'dark' || theme === 'cyberpunk' ? 'vs-dark' : 'vs');
+        monacoInstance.editor.setTheme(theme === 'dark' || theme === 'cyberpunk' ? 'vs-dark' : 'vs');
       }
     }
-  }, [theme, isEditorReady]);
+  }, [theme, isEditorReady, monacoInstance]);
 
   useEffect(() => {
-    // Listen for color theme changes
     const observer = new MutationObserver(() => {
-      if (isEditorReady) {
+      if (isEditorReady && monacoInstance) {
         try {
           const isDark = theme === 'dark' || theme === 'cyberpunk';
           const customTheme = createCustomTheme(isDark);
-          monaco.editor.defineTheme('json-viewer-theme', customTheme);
-          monaco.editor.setTheme('json-viewer-theme');
+          monacoInstance.editor.defineTheme('json-viewer-theme', customTheme);
+          monacoInstance.editor.setTheme('json-viewer-theme');
         } catch (error) {
           console.warn('Error applying Monaco theme on mutation:', error);
-          // Fallback to default theme
-          monaco.editor.setTheme(theme === 'dark' || theme === 'cyberpunk' ? 'vs-dark' : 'vs');
+          monacoInstance.editor.setTheme(theme === 'dark' || theme === 'cyberpunk' ? 'vs-dark' : 'vs');
         }
       }
     });
@@ -128,13 +131,22 @@ export function JsonEditor({ value, onChange, placeholder, className }: JsonEdit
     });
 
     return () => observer.disconnect();
-  }, [theme, isEditorReady]);
+  }, [theme, isEditorReady, monacoInstance]);
 
-  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+  // A função onMount agora nos dá o objeto monaco como segundo argumento.
+  // Salvamos a instância e a usamos em vez do import global.
+  const handleEditorDidMount = (editor: any, monaco: any) => {
     editorRef.current = editor;
+    setMonacoInstance(monaco); // Salva a instância do monaco no estado
     setIsEditorReady(true);
 
-    // Configure editor options
+    // Otimização: define o validador de JSON uma única vez.
+    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: true,
+      schemas: [],
+      enableSchemaRequest: true,
+    });
+    
     editor.updateOptions({
       fontSize: 14,
       fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
@@ -157,12 +169,13 @@ export function JsonEditor({ value, onChange, placeholder, className }: JsonEdit
       },
     });
 
-    // Add validation for JSON
+    // Adiciona validação para JSON
     const model = editor.getModel();
     if (model) {
       const validateJson = () => {
         const content = model.getValue();
         if (!content.trim()) {
+          // Usa a instância monaco passada pelo onMount
           monaco.editor.setModelMarkers(model, 'json', []);
           return;
         }
@@ -187,14 +200,12 @@ export function JsonEditor({ value, onChange, placeholder, className }: JsonEdit
         }
       };
 
-      // Validate on content change with debounce
       let validationTimeout: NodeJS.Timeout;
       model.onDidChangeContent(() => {
         clearTimeout(validationTimeout);
         validationTimeout = setTimeout(validateJson, 500);
       });
 
-      // Initial validation
       validateJson();
     }
   };

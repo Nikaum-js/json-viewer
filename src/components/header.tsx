@@ -1,8 +1,12 @@
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Button } from "@/components/ui/button";
 import { Braces, Github } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 export function Header() {
+  const { t } = useTranslation();
+  
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90 shadow-sm">
       <div className="container flex h-20 items-center justify-between px-6 md:px-8">
@@ -14,10 +18,10 @@ export function Header() {
             </div>
             <div className="flex flex-col">
               <h1 className="text-xl font-bold text-foreground tracking-tight">
-                JSON Viewer
+                {t('header.title')}
               </h1>
               <p className="hidden text-sm text-muted-foreground sm:block font-medium">
-                Visualizar • Analisar • Formatar
+                {t('header.subtitle')}
               </p>
             </div>
           </div>
@@ -29,12 +33,12 @@ export function Header() {
             size="icon"
             asChild
             className="h-10 w-10"
-            title="Visitar GitHub"
           >
             <a
               href="https://github.com/nikaum-js"
               target="_blank"
               rel="noopener noreferrer"
+              title={t('header.visitGithub')}
             >
               <Github className="h-4 w-4" />
               <span className="sr-only">GitHub</span>
@@ -42,6 +46,7 @@ export function Header() {
           </Button>
 
 
+          <LanguageSwitcher />
           <ThemeSwitcher />
         </div>
       </div>

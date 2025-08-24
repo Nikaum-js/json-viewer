@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslation } from 'react-i18next';
 import {
   Braces,
   Brackets,
@@ -70,6 +71,7 @@ export function JsonViewerPanel({
   viewMode = 'tree',
   onViewModeChange
 }: JsonViewerPanelProps) {
+  const { t } = useTranslation();
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [activeMode, setActiveMode] = useState<'tree' | 'graph'>(viewMode);
 
@@ -119,7 +121,7 @@ export function JsonViewerPanel({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Search className="h-4 w-4 text-primary" />
-            <h2 className="text-lg font-semibold text-foreground">Preview</h2>
+            <h2 className="text-lg font-semibold text-foreground">{t('viewer.title')}</h2>
           </div>
           
           {/* View Mode Buttons */}
@@ -163,10 +165,10 @@ export function JsonViewerPanel({
                 onClick={onExpandAll}
                 disabled={!data || (data as any).error}
                 className="text-xs gap-1"
-                title="Expand All"
+                title={t('viewer.expandAll')}
               >
                 <Expand className="h-4 w-4" />
-                <span className="hidden sm:inline">Expand</span>
+                <span className="hidden sm:inline">{t('viewer.expandAll')}</span>
               </Button>
               <Button 
                 variant="outline" 
@@ -174,10 +176,10 @@ export function JsonViewerPanel({
                 onClick={onCollapseAll}
                 disabled={!data || (data as any).error}
                 className="text-xs gap-1"
-                title="Collapse All"
+                title={t('viewer.collapseAll')}
               >
                 <Minimize className="h-4 w-4" />
-                <span className="hidden sm:inline">Collapse</span>
+                <span className="hidden sm:inline">{t('viewer.collapseAll')}</span>
               </Button>
             </>
           )}
@@ -202,7 +204,7 @@ export function JsonViewerPanel({
           <Input
             value={debouncedSearchTerm}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange(e.target.value)}
-            placeholder="Search keys and values..."
+            placeholder={t('viewer.search')}
             className="pl-10 bg-background"
             disabled={!data || (data as any).error}
           />
@@ -217,22 +219,26 @@ export function JsonViewerPanel({
 }
 
 function EmptyState() {
+  const { t } = useTranslation();
+  
   return (
     <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
       <Search className="h-16 w-16 mb-4 opacity-50" />
-      <p className="text-lg">Enter JSON data to visualize</p>
-      <p className="text-sm mt-2">Use the input panel to paste, upload, or load example JSON</p>
+      <p className="text-lg">{t('viewer.emptyState.title', 'Enter JSON data to visualize')}</p>
+      <p className="text-sm mt-2">{t('viewer.emptyState.description', 'Use the input panel to paste, upload, or load example JSON')}</p>
     </div>
   );
 }
 
 function ErrorState({ error }: { error: string }) {
+  const { t } = useTranslation();
+  
   return (
     <div className="flex flex-col items-center justify-center h-full text-destructive">
       <div className="bg-destructive/10 rounded-lg p-6 max-w-md text-center">
-        <h3 className="text-lg font-semibold mb-2">Invalid JSON</h3>
+        <h3 className="text-lg font-semibold mb-2">{t('errors.invalidJson')}</h3>
         <p className="text-sm">{error}</p>
-        <p className="text-xs mt-2 text-muted-foreground">Please check your JSON syntax and try again</p>
+        <p className="text-xs mt-2 text-muted-foreground">{t('viewer.errorState.description', 'Please check your JSON syntax and try again')}</p>
       </div>
     </div>
   );
@@ -361,22 +367,23 @@ interface CopyMenuProps {
 }
 
 function CopyMenu({ value, jsonPath }: CopyMenuProps) {
+  const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
   const [copiedType, setCopiedType] = useState<string | null>(null);
 
   const copyOptions = [
     {
-      label: "Copy Value",
+      label: t('viewer.copyValue'),
       action: () => copyToClipboard(typeof value === 'string' ? value : JSON.stringify(value)),
       icon: Copy
     },
     {
-      label: "Copy Path", 
+      label: t('viewer.copyPath'), 
       action: () => copyToClipboard(jsonPath),
       icon: Link
     },
     {
-      label: "Copy Subtree",
+      label: t('viewer.copySubtree', 'Copy Subtree'),
       action: () => copyToClipboard(JSON.stringify(value, null, 2)),
       icon: Braces
     }

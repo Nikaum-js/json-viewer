@@ -1,0 +1,48 @@
+{
+  "header": {
+    "title": "Visualizador JSON",
+    "subtitle": "Visualizar • Analisar • Formatar",
+    "visitGithub": "Visitar GitHub",
+    "language": "Idioma",
+    "theme": "Tema"
+  },
+  "editor": {
+    "title": "Editor",
+    "loadExample": "Carregar Exemplo",
+    "upload": "Upload",
+    "uploadFile": "Enviar Arquivo",
+    "paste": "Colar",
+    "pasteFromClipboard": "Colar da Área de Transferência",
+    "placeholder": "Cole seu JSON aqui ou use os botões acima...",
+    "formatJson": "Formatar JSON",
+    "minifyJson": "Minificar JSON"
+  },
+  "viewer": {
+    "title": "Visualizador JSON",
+    "search": "Pesquisar...",
+    "expandAll": "Expandir Tudo",
+    "collapseAll": "Recolher Tudo",
+    "copyPath": "Copiar Caminho",
+    "copyValue": "Copiar Valor"
+  },
+  "statusBar": {
+    "line": "Ln",
+    "column": "Col",
+    "lines": "linhas",
+    "characters": "caracteres",
+    "selected": "selecionado",
+    "spaces": "Espaços",
+    "encoding": "UTF-8"
+  },
+  "errors": {
+    "invalidJson": "Formato JSON inválido",
+    "fileTooBig": "Arquivo muito grande",
+    "uploadError": "Falha no upload",
+    "selectValidJson": "Por favor selecione um arquivo JSON válido"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español", 
+    "pt": "Português"
+  }
+}

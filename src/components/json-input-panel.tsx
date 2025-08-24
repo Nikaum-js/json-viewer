@@ -1,10 +1,11 @@
 import { SimpleJsonEditor } from "@/components/simple-json-editor";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Braces, Clipboard, FileText, Github, Upload } from "lucide-react";
 import { useRef } from "react";
+import { ThemeSwitcher } from "./theme-switcher";
+import { LanguageSwitcher } from "./language-switcher";
+import { useTranslation } from 'react-i18next';
 
 interface JsonInputPanelProps {
   value: string;
@@ -21,6 +22,7 @@ export function JsonInputPanel({
   onUploadFile,
   onPaste
 }: JsonInputPanelProps) {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +30,7 @@ export function JsonInputPanel({
     if (file && file.type === 'application/json') {
       onUploadFile(file);
     } else if (file) {
-      console.error('Please select a valid JSON file');
+      console.error(t('errors.selectValidJson'));
     }
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -38,8 +40,6 @@ export function JsonInputPanel({
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
-
-  console.log(value);
 
   return (
     <Card className="h-full flex flex-col border-0 rounded-none bg-card">
@@ -53,55 +53,41 @@ export function JsonInputPanel({
             </div>
             <div className="flex flex-col">
               <h1 className="text-base md:text-lg font-bold text-foreground tracking-tight">
-                JSON Viewer
+                {t('header.title')}
               </h1>
               <p className="hidden text-xs text-muted-foreground sm:block font-medium">
-                Visualizar • Analisar • Formatar
+                {t('header.subtitle')}
               </p>
             </div>
           </div>
           {/* Right side - Controls */}
-          <TooltipProvider>
-            <div className="flex items-center gap-1 md:gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    asChild
-                    className="h-9 w-9"
-                  >
-                    <a
-                      href="https://github.com/nikaum-js"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Github className="h-5 w-5" />
-                      <span className="sr-only">GitHub</span>
-                    </a>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Visitar GitHub</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <ThemeSwitcher />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Tema</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </TooltipProvider>
+          <div className="flex items-center gap-1 md:gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              className="h-9 w-9"
+            >
+              <a
+                href="https://github.com/nikaum-js"
+                target="_blank"
+                rel="noopener noreferrer"
+                title={t('header.visitGithub')}
+              >
+                <Github className="h-5 w-5" />
+                <span className="sr-only">GitHub</span>
+              </a>
+            </Button>
+            <LanguageSwitcher />
+            <ThemeSwitcher />
+          </div>
         </div>
       </CardHeader>
       {/* JSON Input Panel Header */}
       <CardHeader className="flex flex-row items-center justify-between py-3 px-8 border-b border-border bg-muted/30">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">Editor</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t('editor.title')}</h2>
         </div>
         <div className="flex gap-1 md:gap-2">
           <Button
@@ -110,14 +96,14 @@ export function JsonInputPanel({
             onClick={onLoadExample}
             className="text-xs hidden sm:inline-flex"
           >
-            Load Example
+{t('editor.loadExample')}
           </Button>
           <Button
             variant="outline"
             size="icon"
             onClick={onLoadExample}
             className="sm:hidden"
-            title="Load Example"
+            title={t('editor.loadExample')}
           >
             <FileText className="h-4 w-4" />
           </Button>
@@ -126,20 +112,20 @@ export function JsonInputPanel({
             size="sm"
             onClick={handleUploadClick}
             className="text-xs gap-1"
-            title="Upload File"
+            title={t('editor.uploadFile')}
           >
             <Upload className="h-4 w-4" />
-            <span className="hidden sm:inline">Upload</span>
+            <span className="hidden sm:inline">{t('editor.upload')}</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={onPaste}
             className="text-xs gap-1"
-            title="Paste from Clipboard"
+            title={t('editor.pasteFromClipboard')}
           >
             <Clipboard className="h-3 w-3" />
-            <span className="hidden sm:inline">Paste</span>
+            <span className="hidden sm:inline">{t('editor.paste')}</span>
           </Button>
         </div>
       </CardHeader>
@@ -147,7 +133,7 @@ export function JsonInputPanel({
         <SimpleJsonEditor
           value={value}
           onChange={onChange}
-          placeholder="Paste your JSON here or use the buttons above..."
+          placeholder={t('editor.placeholder')}
           className="h-full w-full border-0 rounded-none"
         />
         <input

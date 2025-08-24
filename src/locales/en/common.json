@@ -1,0 +1,62 @@
+{
+  "header": {
+    "title": "JSON Viewer",
+    "subtitle": "Visualize • Analyze • Format",
+    "visitGithub": "Visit GitHub",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "themes": {
+    "light": "Light",
+    "dark": "Dark",
+    "cyberpunk": "Cyberpunk",
+    "system": "System"
+  },
+  "editor": {
+    "title": "Editor",
+    "loadExample": "Load Example",
+    "upload": "Upload",
+    "uploadFile": "Upload File",
+    "paste": "Paste",
+    "pasteFromClipboard": "Paste from Clipboard",
+    "placeholder": "Paste your JSON here or use the buttons above...",
+    "formatJson": "Format JSON",
+    "minifyJson": "Minify JSON"
+  },
+  "viewer": {
+    "title": "JSON Viewer",
+    "search": "Search keys and values...",
+    "expandAll": "Expand All",
+    "collapseAll": "Collapse All",
+    "copyPath": "Copy Path",
+    "copyValue": "Copy Value",
+    "copySubtree": "Copy Subtree",
+    "emptyState": {
+      "title": "Enter JSON data to visualize",
+      "description": "Use the input panel to paste, upload, or load example JSON"
+    },
+    "errorState": {
+      "description": "Please check your JSON syntax and try again"
+    }
+  },
+  "statusBar": {
+    "line": "Ln",
+    "column": "Col",
+    "lines": "lines",
+    "characters": "characters",
+    "selected": "selected",
+    "spaces": "Spaces",
+    "encoding": "UTF-8"
+  },
+  "errors": {
+    "invalidJson": "Invalid JSON format",
+    "fileTooBig": "File too large",
+    "uploadError": "Upload failed",
+    "selectValidJson": "Please select a valid JSON file"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español", 
+    "pt": "Português"
+  }
+}

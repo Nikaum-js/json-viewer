@@ -1,6 +1,7 @@
 import { Code, FileText, Hash, Indent, Languages, MousePointerClick } from "lucide-react";
 import { useEffect, useState } from "react";
 import * as monaco from "monaco-editor";
+import { useTranslation } from 'react-i18next';
 
 interface MonacoStatusBarProps {
   editor: monaco.editor.IStandaloneCodeEditor | null;
@@ -30,6 +31,7 @@ export function MonacoStatusBar({
   onLanguageClick, 
   onIndentationClick 
 }: MonacoStatusBarProps) {
+  const { t } = useTranslation();
   const [statusInfo, setStatusInfo] = useState<StatusInfo>({
     line: 1,
     column: 1,
@@ -91,9 +93,9 @@ export function MonacoStatusBar({
         // Create responsive selection text
         let text = '';
         if (lineCount > 1) {
-          text = `${lineCount} lines, ${charCount} chars`;
+          text = `${lineCount} ${t('statusBar.lines')}, ${charCount} ${t('statusBar.characters')}`;
         } else {
-          text = `${charCount} chars`;
+          text = `${charCount} ${t('statusBar.characters')}`;
         }
         
         selectionInfo = {
@@ -149,12 +151,12 @@ export function MonacoStatusBar({
     switch (breakpoint) {
       case 'desktop':
         return selection.lineCount > 1 
-          ? `${selection.lineCount} lines, ${selection.charCount} chars selected`
-          : `${selection.charCount} chars selected`;
+          ? `${selection.lineCount} ${t('statusBar.lines')}, ${selection.charCount} ${t('statusBar.characters')} ${t('statusBar.selected')}`
+          : `${selection.charCount} ${t('statusBar.characters')} ${t('statusBar.selected')}`;
       case 'tablet':
         return selection.lineCount > 1 
-          ? `${selection.lineCount} lines selected`
-          : `${selection.charCount} chars selected`;
+          ? `${selection.lineCount} ${t('statusBar.lines')} ${t('statusBar.selected')}`
+          : `${selection.charCount} ${t('statusBar.characters')} ${t('statusBar.selected')}`;
       case 'mobile':
         return selection.lineCount > 1 
           ? `${selection.lineCount} sel`
@@ -170,7 +172,7 @@ export function MonacoStatusBar({
       <div className="flex items-center flex-shrink-0 gap-2">
         <span className="text-muted-foreground whitespace-nowrap">
           <Hash className="inline h-3 w-3 mr-1" />
-          Ln {statusInfo.line}, Col {statusInfo.column}
+{t('statusBar.line')} {statusInfo.line}, {t('statusBar.column')} {statusInfo.column}
         </span>
         <span className="text-muted-foreground">|</span>
         <span 
@@ -212,7 +214,7 @@ export function MonacoStatusBar({
         <span className="text-muted-foreground">|</span>
         <span className="text-muted-foreground whitespace-nowrap">
           <Code className="inline h-3 w-3 mr-1" />
-          {statusInfo.totalLines} lines
+{statusInfo.totalLines} {t('statusBar.lines')}
         </span>
 
         {/* Indentation - Hidden on mobile */}
@@ -223,7 +225,7 @@ export function MonacoStatusBar({
             onClick={onIndentationClick}
           >
             <Indent className="inline h-3 w-3 mr-1" />
-            {statusInfo.indentation}
+{statusInfo.indentation.replace('Spaces:', t('statusBar.spaces') + ':').replace('Tab Size:', 'Tab Size:')}
           </span>
         </div>
 
@@ -248,7 +250,7 @@ export function MonacoStatusBar({
         <div className="hidden sm:flex items-center gap-2">
           <span className="text-muted-foreground">|</span>
           <span className="text-muted-foreground whitespace-nowrap">
-            {statusInfo.characters.toLocaleString()} chars
+{statusInfo.characters.toLocaleString()} {t('statusBar.characters')}
           </span>
         </div>
       </div>
