@@ -112,9 +112,9 @@ Load Example
 </Button>
 <Button
 variant="outline"
-size="sm"
+size="icon"
 onClick={onLoadExample}
-className="text-xs sm:hidden w-9 h-9 p-0"
+className="sm:hidden"
 title="Load Example"
 >
 <FileText className="h-4 w-4" />
@@ -123,20 +123,20 @@ title="Load Example"
 variant="outline"
 size="sm"
 onClick={handleUploadClick}
-className="text-xs"
+className="text-xs gap-1"
 title="Upload File"
 >
-<Upload className="h-4 w-4 sm:mr-1" />
+<Upload className="h-4 w-4" />
 <span className="hidden sm:inline">Upload</span>
 </Button>
 <Button
 variant="outline"
 size="sm"
 onClick={onPaste}
-className="text-xs"
+className="text-xs gap-1"
 title="Paste from Clipboard"
 >
-<Clipboard className="h-4 w-4 sm:mr-1" />
+<Clipboard className="h-4 w-4" />
 <span className="hidden sm:inline">Paste</span>
 </Button>
 </div>
