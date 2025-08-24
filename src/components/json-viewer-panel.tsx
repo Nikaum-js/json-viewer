@@ -402,7 +402,7 @@ function CopyMenu({ value, jsonPath }: CopyMenuProps) {
               <button
                 key={option.label}
                 onClick={option.action}
-                className="w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-accent text-left transition-colors"
+                className="inline-flex items-center justify-start gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 w-full px-3 py-1.5 text-xs hover:bg-accent text-left rounded-sm"
               >
                 <Icon className="h-3 w-3" />
                 {option.label}
