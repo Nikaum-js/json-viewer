@@ -143,7 +143,7 @@ export function SimpleJsonEditor({ value, onChange, placeholder, className }: Si
         { token: 'delimiter', foreground: 'a855f7' },                  // Fallback delimiter
       ],
       colors: {
-        'editor.background': '#0c0c0e',
+        'editor.background': '#2A3040',
         'editor.foreground': '#e5e7eb',
         'editorLineNumber.foreground': '#9ca3af',
         'editorCursor.foreground': '#f97316',
@@ -206,7 +206,7 @@ export function SimpleJsonEditor({ value, onChange, placeholder, className }: Si
           { token: 'delimiter', foreground: getCSSColor('--json-bracket').substring(1) },
         ],
         colors: {
-          'editor.background': getCSSColor('--card'),
+          'editor.background': '#2A3040',
           'editor.foreground': getCSSColor('--foreground'),
           'editorLineNumber.foreground': getCSSColor('--muted-foreground'),
           'editorCursor.foreground': getCSSColor('--primary'),
