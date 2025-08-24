@@ -2,6 +2,10 @@ import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "./theme-provider";
+import { useMonacoConfig } from "@/hooks/use-monaco-config";
+import { MonacoSettings } from "./monaco-settings";
+import { Button } from "./ui/button";
+import { Settings } from "lucide-react";
 
 interface SimpleJsonEditorProps {
   value: string;
@@ -13,8 +17,10 @@ interface SimpleJsonEditorProps {
 
 export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEditorProps) {
   const { theme } = useTheme();
+  const { config, getMonacoOptions } = useMonacoConfig();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [statusInfo, setStatusInfo] = useState({
     line: 1,
     column: 1,
@@ -404,72 +410,21 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
     // Initial status update
     updateStatusInfo();
 
+    // Apply VS Code-style configuration
+    const monacoOptions = getMonacoOptions();
     editor.updateOptions({
-      // Font and appearance
-      fontSize: 14,
-      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-      fontLigatures: true,
+      ...monacoOptions,
+      // Keep existing Monaco-specific settings
       lineNumbers: 'on',
       lineNumbersMinChars: 3,
-      
-      // Enhanced minimap with better functionality
-      minimap: { 
-        enabled: true,
-        size: 'proportional',
-        showSlider: 'mouseover',
-        renderCharacters: true,
-        maxColumn: 120,
-        scale: 1
-      },
-      
-      // Scrolling improvements
-      scrollBeyondLastLine: false,
-      smoothScrolling: true,
+      automaticLayout: true,
+      wordWrapColumn: 120,
       mouseWheelScrollSensitivity: 1,
       fastScrollSensitivity: 5,
-      scrollbar: {
-        vertical: 'auto',
-        horizontal: 'auto',
-        useShadows: true,
-        verticalScrollbarSize: 12,
-        horizontalScrollbarSize: 12,
-        arrowSize: 11
-      },
-      
-      // Word wrapping and layout
-      wordWrap: 'on',
-      wordWrapColumn: 120,
-      automaticLayout: true,
-      
-      // Indentation and formatting
-      tabSize: 2,
-      insertSpaces: true,
-      detectIndentation: true,
-      trimAutoWhitespace: true,
-      
-      // Enhanced folding
-      folding: true,
       foldingStrategy: 'indentation',
-      showFoldingControls: 'mouseover',
       foldingHighlight: true,
       unfoldOnClickAfterEndOfLine: true,
-      
-      // Advanced bracket features
-      bracketPairColorization: { 
-        enabled: true,
-        independentColorPoolPerBracketType: true
-      },
       matchBrackets: 'always',
-      
-      // Enhanced guides
-      guides: {
-        indentation: true,
-        bracketPairs: 'active',
-        bracketPairsHorizontal: 'active',
-        highlightActiveIndentation: true
-      },
-      
-      // Suggestions and intellisense
       quickSuggestions: {
         other: true,
         comments: true,
@@ -478,57 +433,13 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
       quickSuggestionsDelay: 100,
       suggestOnTriggerCharacters: true,
       acceptSuggestionOnEnter: 'on',
-      acceptSuggestionOnCommitCharacter: true,
       snippetSuggestions: 'inline',
       wordBasedSuggestions: 'currentDocument',
-      
-      // Multi-cursor support
-      multiCursorModifier: 'ctrlCmd',
-      multiCursorMergeOverlapping: true,
-      
-      // Find and replace improvements
-      find: {
-        seedSearchStringFromSelection: 'always',
-        autoFindInSelection: 'multiline'
-      },
-      
-      // Hover and tooltips
-      hover: {
-        enabled: true,
-        delay: 300,
-        sticky: true
-      },
-      
-      // Performance optimizations
-      largeFileOptimizations: true,
-      
-      // Error and warning indicators
       glyphMargin: true,
-      
-      // Selection and cursor
-      selectionHighlight: true,
-      occurrencesHighlight: 'singleFile',
       cursorStyle: 'line',
       cursorWidth: 2,
-      cursorBlinking: 'smooth',
       hideCursorInOverviewRuler: false,
-      
-      // Enhanced editing features
-      formatOnType: true,
-      formatOnPaste: true,
-      autoIndent: 'full',
-      dragAndDrop: true,
-      copyWithSyntaxHighlighting: true,
-      
-      // Code lens and breadcrumbs (if supported)
-      codeLens: false, // JSON doesn't typically need code lens
-      
-      // Accessibility
-      accessibilitySupport: 'on',
-      
-      // Performance for large files
-      stopRenderingLineAfter: 1000,
-      maxTokenizationLineLength: 2000
+      codeLens: false // JSON doesn't typically need code lens
     });
     
     // Add JSON validation with enhanced error reporting
@@ -599,20 +510,53 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
     if (isEditorReady && editorRef.current) {
       const editor = editorRef.current;
       
+      // Apply latest configuration when config changes
+      const monacoOptions = getMonacoOptions();
+      editor.updateOptions({
+        ...monacoOptions,
+        // Keep existing Monaco-specific settings
+        lineNumbers: 'on',
+        lineNumbersMinChars: 3,
+        automaticLayout: true,
+        wordWrapColumn: 120,
+        mouseWheelScrollSensitivity: 1,
+        fastScrollSensitivity: 5,
+        foldingStrategy: 'indentation',
+        foldingHighlight: true,
+        unfoldOnClickAfterEndOfLine: true,
+        matchBrackets: 'always',
+        quickSuggestions: {
+          other: true,
+          comments: true,
+          strings: true
+        },
+        quickSuggestionsDelay: 100,
+        suggestOnTriggerCharacters: true,
+        acceptSuggestionOnEnter: 'on',
+        snippetSuggestions: 'inline',
+        wordBasedSuggestions: 'currentDocument',
+        glyphMargin: true,
+        cursorStyle: 'line',
+        cursorWidth: 2,
+        hideCursorInOverviewRuler: false,
+        codeLens: false
+      });
+      
       // Custom keyboard shortcuts
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyJ, () => {
-        // Format JSON
-        const model = editor.getModel();
-        if (model) {
-          try {
-            const value = model.getValue();
-            if (value.trim()) {
-              const formatted = JSON.stringify(JSON.parse(value), null, 2);
-              model.setValue(formatted);
+        if (config.formatOnSave) {
+          // Format JSON
+          const model = editor.getModel();
+          if (model) {
+            try {
+              const value = model.getValue();
+              if (value.trim()) {
+                const formatted = JSON.stringify(JSON.parse(value), null, config.tabSize);
+                model.setValue(formatted);
+              }
+            } catch (e) {
+              console.warn('Cannot format invalid JSON');
             }
-          } catch (e) {
-            // If JSON is invalid, don't format
-            console.warn('Cannot format invalid JSON');
           }
         }
       });
@@ -633,6 +577,11 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
         }
       });
       
+      // Settings shortcut
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Comma, () => {
+        setShowSettings(true);
+      });
+      
       // Enhanced find widget
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF, () => {
         editor.getAction('actions.find')?.run();
@@ -644,16 +593,18 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
       });
       
       // Toggle fold all
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.BracketLeft, () => {
-        editor.getAction('editor.foldAll')?.run();
-      });
-      
-      // Toggle unfold all
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.BracketRight, () => {
-        editor.getAction('editor.unfoldAll')?.run();
-      });
+      if (config.folding) {
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.BracketLeft, () => {
+          editor.getAction('editor.foldAll')?.run();
+        });
+        
+        // Toggle unfold all
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.BracketRight, () => {
+          editor.getAction('editor.unfoldAll')?.run();
+        });
+      }
     }
-  }, [isEditorReady]);
+  }, [isEditorReady, config, getMonacoOptions]);
 
   // Debounce utility function
   function debounce<T extends (...args: any[]) => void>(func: T, wait: number): T {
@@ -666,6 +617,19 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
 
   return (
     <div className={`relative ${className} flex flex-col`}>
+      {/* Settings Button */}
+      <div className="absolute top-2 right-2 z-10">
+        <Button
+          variant="ghost" 
+          size="sm"
+          onClick={() => setShowSettings(true)}
+          className="opacity-50 hover:opacity-100 transition-opacity p-2 h-8 w-8"
+          title="Editor Settings (Ctrl+,)"
+        >
+          <Settings className="h-3 w-3" />
+        </Button>
+      </div>
+      
       <div className="flex-1 relative">
         <Editor
           height="100%"
@@ -706,11 +670,24 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
             {statusInfo.jsonValid ? '✓ Valid JSON' : '✗ Invalid JSON'}
           </span>
           <span>{statusInfo.language}</span>
-          <span className="text-xs opacity-75">
-            Ctrl+J: Format | Ctrl+K: Minify | Ctrl+F: Find
-          </span>
+          <span className="opacity-75">Font: {config.fontFamily.split(',')[0].replace(/'/g, '')}</span>
+          <span className="opacity-75">{config.fontSize}px</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowSettings(true)}
+            className="h-4 px-2 text-xs opacity-75 hover:opacity-100"
+          >
+            Settings
+          </Button>
         </div>
       </div>
+      
+      {/* Monaco Settings Modal */}
+      <MonacoSettings 
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   );
 }
