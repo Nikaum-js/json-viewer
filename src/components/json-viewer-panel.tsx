@@ -51,7 +51,7 @@ export function JsonViewerPanel({
       <CardHeader className="flex flex-row items-center justify-between py-3 px-4 border-b border-border bg-muted/30">
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">JSON Viewer</h2>
+          <h2 className="text-lg font-semibold text-foreground">Preview</h2>
         </div>
         <div className="flex gap-1 md:gap-2">
           <Button 

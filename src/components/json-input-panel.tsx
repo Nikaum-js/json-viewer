@@ -99,7 +99,7 @@ rel="noopener noreferrer"
 <CardHeader className="flex flex-row items-center justify-between py-3 px-8 border-b border-border bg-muted/30">
 <div className="flex items-center gap-2">
 <FileText className="h-4 w-4 text-primary" />
-<h2 className="text-lg font-semibold text-foreground">JSON Input</h2>
+<h2 className="text-lg font-semibold text-foreground">Editor</h2>
 </div>
 <div className="flex gap-1 md:gap-2">
 <Button
