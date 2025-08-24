@@ -2,6 +2,7 @@ import { SimpleJsonEditor } from "@/components/simple-json-editor";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Braces, Clipboard, FileText, Github, Upload } from "lucide-react";
 import { useRef } from "react";
 
@@ -58,13 +59,15 @@ Visualizar • Analisar • Formatar
 </div>
 </div>
 {/* Right side - Controls */}
+<TooltipProvider>
 <div className="flex items-center gap-1 md:gap-2">
+<Tooltip>
+<TooltipTrigger asChild>
 <Button
 variant="ghost"
 size="icon"
 asChild
 className="h-7 w-7 md:h-8 md:w-8"
-title="Visitar GitHub"
 >
 <a
 href="https://github.com/nikaum-js"
@@ -75,8 +78,21 @@ rel="noopener noreferrer"
 <span className="sr-only">GitHub</span>
 </a>
 </Button>
+</TooltipTrigger>
+<TooltipContent>
+<p>Visitar GitHub</p>
+</TooltipContent>
+</Tooltip>
+<Tooltip>
+<TooltipTrigger asChild>
 <ThemeSwitcher />
+</TooltipTrigger>
+<TooltipContent>
+<p>Alternar tema</p>
+</TooltipContent>
+</Tooltip>
 </div>
+</TooltipProvider>
 </div>
 </CardHeader>
 {/* JSON Input Panel Header */}

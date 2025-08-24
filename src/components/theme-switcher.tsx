@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Zap } from "lucide-react";
 import { useTheme } from "./theme-provider";
@@ -9,7 +9,8 @@ interface ThemeSwitcherProps {
   className?: string;
 }
 
-export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
+export const ThemeSwitcher = React.forwardRef<HTMLButtonElement, ThemeSwitcherProps>(
+  ({ className }, ref) => {
   const { theme, setTheme: setThemeContext } = useTheme();
   console.log('🎯 ThemeSwitcher render - current theme:', theme);
 
@@ -51,14 +52,17 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
 
   return (
     <Button
+      ref={ref}
       variant="ghost"
       size="icon"
       onClick={cycleTheme}
       className={`h-10 w-10 ${className}`}
-      title={getTitle()}
     >
       {getIcon()}
       <span className="sr-only">Alternar tema</span>
     </Button>
   );
-}
+  }
+);
+
+ThemeSwitcher.displayName = "ThemeSwitcher";
