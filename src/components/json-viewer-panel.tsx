@@ -2,11 +2,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { 
-  Hash, Quote, Check, X, Circle, Brackets, Braces,
-  ChevronRight, ChevronDown, Copy, Download, Expand, 
-  Minimize, Network, Search, TreePine, Link,
-  MoreVertical 
+import {
+  Braces,
+  Brackets,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Circle,
+  Copy, Download, Expand,
+  Hash,
+  Link,
+  Minimize,
+  MoreVertical,
+  Network,
+  Quote,
+  Search, TreePine,
+  X
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { JsonGraphView } from "./json-view-implementations";
@@ -94,7 +105,7 @@ export function JsonViewerPanel({
   }, [data, activeMode, searchTerm, expandAll]);
 
   return (
-    <Card className="h-full flex flex-col border-0 rounded-none bg-card pt-3">
+    <Card className="h-full flex flex-col border-0 rounded-none z--2 bg-card pt-3">
       {/* Empty header for alignment with main header */}
       <CardHeader className="border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90">
         <div className="flex items-center justify-end py-2">

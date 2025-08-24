@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from "react";
 import { useTheme } from "@/components/theme-provider";
+import { useCallback, useEffect } from "react";
 
 export interface JsonThemeColors {
   string: string;
@@ -16,13 +16,11 @@ export function useJsonTheme() {
   const { theme } = useTheme();
 
   const getJsonColors = useCallback((): JsonThemeColors => {
-    // Get computed colors from CSS variables (now in hex format)
     const root = document.documentElement;
     const style = getComputedStyle(root);
     
     const getColor = (property: string): string => {
       const value = style.getPropertyValue(property).trim();
-      // Return hex color directly
       return value || '#000000';
     };
 
@@ -42,7 +40,6 @@ export function useJsonTheme() {
     const isDark = theme === 'dark' || theme === 'cyberpunk';
     const colors = getJsonColors();
     
-    // Trigger a custom event to notify other components about color changes
     const event = new CustomEvent('json-theme-change', { 
       detail: { colors, isDark } 
     });

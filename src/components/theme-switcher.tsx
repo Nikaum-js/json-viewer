@@ -35,8 +35,6 @@ export const ThemeSwitcher = React.forwardRef<HTMLButtonElement, ThemeSwitcherPr
     }
   };
 
-  // Removed unused getTitle function
-
   return (
     <Button
       ref={ref}

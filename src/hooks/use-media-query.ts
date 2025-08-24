@@ -16,7 +16,6 @@ export function useMediaQuery(query: string): boolean {
       media.addEventListener('change', listener)
       return () => media.removeEventListener('change', listener)
     } else {
-      // Fallback for older browsers
       media.addListener(listener)
       return () => media.removeListener(listener)
     }

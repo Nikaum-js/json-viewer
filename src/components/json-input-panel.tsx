@@ -39,6 +39,8 @@ export function JsonInputPanel({
     fileInputRef.current?.click();
   };
 
+  console.log(value);
+
   return (
     <Card className="h-full flex flex-col border-0 rounded-none bg-card">
       {/* Main Application Header - Integrated */}
@@ -84,11 +86,11 @@ export function JsonInputPanel({
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                   <ThemeSwitcher />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Alternar tema</p>
+                  <p>Tema</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -136,7 +138,7 @@ export function JsonInputPanel({
             className="text-xs gap-1"
             title="Paste from Clipboard"
           >
-            <Clipboard className="h-4 w-4" />
+            <Clipboard className="h-3 w-3" />
             <span className="hidden sm:inline">Paste</span>
           </Button>
         </div>
