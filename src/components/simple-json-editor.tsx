@@ -85,12 +85,12 @@ export function SimpleJsonEditor({ value, onChange, placeholder, className }: Si
         { token: 'delimiter', foreground: '00ff80' },                  // Fallback delimiter
       ],
       colors: {
-        'editor.background': '#1a0d26',
+        'editor.background': '#1E1E3F',
         'editor.foreground': '#e0c3fc',
         'editorLineNumber.foreground': '#805ad5',
         'editorCursor.foreground': '#ff00ff',
         'editor.selectionBackground': '#4a1a5c',
-        'editor.lineHighlightBackground': '#2d1b3d',
+        'editor.lineHighlightBackground': '#2A2A4F',
         'editorBracketMatch.background': '#ff008040',
         'editorBracketMatch.border': '#ff0080',
       }
@@ -235,13 +235,13 @@ export function SimpleJsonEditor({ value, onChange, placeholder, className }: Si
           { token: 'delimiter', foreground: getCSSColor('--json-bracket').substring(1) },
         ],
         colors: {
-          'editor.background': getCSSColor('--background'),
+          'editor.background': '#1E1E3F',
           'editor.foreground': getCSSColor('--foreground'),
           'editorLineNumber.foreground': getCSSColor('--muted-foreground'),
           'editorCursor.foreground': getCSSColor('--primary'),
-          'editor.selectionBackground': getCSSColor('--accent'),
-          'editor.lineHighlightBackground': getCSSColor('--muted'),
-          'editorBracketMatch.background': getCSSColor('--accent'),
+          'editor.selectionBackground': getCSSColor('--accent') + '40',
+          'editor.lineHighlightBackground': '#2A2A4F',
+          'editorBracketMatch.background': getCSSColor('--accent') + '40',
           'editorBracketMatch.border': getCSSColor('--primary'),
         }
       });

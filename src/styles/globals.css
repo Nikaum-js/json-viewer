@@ -94,47 +94,52 @@
   }
 
   .cyberpunk {
-    --background: 240 38% 11%;
+    --background: 240 38% 8%;
     --foreground: 220 17% 93%;
-    --card: 240 26% 18%;
+    --card: 240 35% 18%;
     --card-foreground: 220 17% 93%;
-    --popover: 240 26% 18%;
+    --popover: 240 35% 18%;
     --popover-foreground: 220 17% 93%;
     --primary: 320 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 26% 18%;
+    --secondary: 240 35% 18%;
     --secondary-foreground: 220 17% 93%;
-    --muted: 240 26% 18%;
+    --muted: 240 35% 18%;
     --muted-foreground: 240 5% 65%;
     --accent: 180 100% 50%;
-    --accent-foreground: 240 38% 11%;
+    --accent-foreground: 240 38% 8%;
     --destructive: 14 100% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 19% 29%;
-    --input: 240 19% 29%;
+    --border: 240 35% 27%;
+    --input: 240 35% 27%;
     --ring: 320 100% 50%;
     --chart-1: 320 100% 50%;
     --chart-2: 270 100% 50%;
     --chart-3: 195 100% 50%;
     --chart-4: 180 100% 50%;
     --chart-5: 60 100% 50%;
-    --sidebar: 240 38% 11%;
+    --sidebar: 240 38% 8%;
     --sidebar-foreground: 220 17% 93%;
     --sidebar-primary: 320 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 180 100% 50%;
-    --sidebar-accent-foreground: 240 38% 11%;
-    --sidebar-border: 240 19% 29%;
+    --sidebar-accent-foreground: 240 38% 8%;
+    --sidebar-border: 240 35% 27%;
     --sidebar-ring: 320 100% 50%;
     --radius: 0.5rem;
-    --shadow-2xs: 0px 4px 8px -2px hsl(320 100% 50% / 0.05);
-    --shadow-xs: 0px 4px 8px -2px hsl(320 100% 50% / 0.05);
-    --shadow-sm: 0px 4px 8px -2px hsl(320 100% 50% / 0.10), 0px 1px 2px -3px hsl(320 100% 50% / 0.10);
-    --shadow: 0px 4px 8px -2px hsl(320 100% 50% / 0.10), 0px 1px 2px -3px hsl(320 100% 50% / 0.10);
-    --shadow-md: 0px 4px 8px -2px hsl(320 100% 50% / 0.10), 0px 2px 4px -3px hsl(320 100% 50% / 0.10);
-    --shadow-lg: 0px 4px 8px -2px hsl(320 100% 50% / 0.10), 0px 4px 6px -3px hsl(320 100% 50% / 0.10);
-    --shadow-xl: 0px 4px 8px -2px hsl(320 100% 50% / 0.10), 0px 8px 10px -3px hsl(320 100% 50% / 0.10);
-    --shadow-2xl: 0px 4px 8px -2px hsl(320 100% 50% / 0.25);
+    --font-sans: Outfit, sans-serif;
+    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: Fira Code, monospace;
+    --tracking-normal: 0rem;
+    --spacing: 0.25rem;
+    --shadow-2xs: 0px 4px 8px -2px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0px 4px 8px -2px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0px 4px 8px -2px hsl(0 0% 0% / 0.10), 0px 1px 2px -3px hsl(0 0% 0% / 0.10);
+    --shadow: 0px 4px 8px -2px hsl(0 0% 0% / 0.10), 0px 1px 2px -3px hsl(0 0% 0% / 0.10);
+    --shadow-md: 0px 4px 8px -2px hsl(0 0% 0% / 0.10), 0px 2px 4px -3px hsl(0 0% 0% / 0.10);
+    --shadow-lg: 0px 4px 8px -2px hsl(0 0% 0% / 0.10), 0px 4px 6px -3px hsl(0 0% 0% / 0.10);
+    --shadow-xl: 0px 4px 8px -2px hsl(0 0% 0% / 0.10), 0px 8px 10px -3px hsl(0 0% 0% / 0.10);
+    --shadow-2xl: 0px 4px 8px -2px hsl(0 0% 0% / 0.25);
   }
 
   @theme inline {
