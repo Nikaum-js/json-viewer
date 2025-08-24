@@ -1,6 +1,6 @@
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "./theme-provider";
 
 interface SimpleJsonEditorProps {
@@ -10,10 +10,20 @@ interface SimpleJsonEditorProps {
   className?: string;
 }
 
+
 export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEditorProps) {
   const { theme } = useTheme();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const [statusInfo, setStatusInfo] = useState({
+    line: 1,
+    column: 1,
+    characters: 0,
+    lines: 1,
+    selection: '',
+    jsonValid: true,
+    language: 'JSON'
+  });
 
   const getEffectiveTheme = () => {
     if (theme === 'system') {
@@ -67,6 +77,93 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
   };
 
   const handleBeforeMount = (monaco: any) => {
+    // Enhanced JSON Language Configuration
+    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: true,
+      allowComments: false,
+      schemaValidation: 'error',
+      enableSchemaRequest: true,
+      schemaRequest: 'warning'
+    });
+
+    // Custom JSON completion provider for better suggestions
+    monaco.languages.registerCompletionItemProvider('json', {
+      provideCompletionItems: () => {
+        const suggestions = [
+          {
+            label: '"string"',
+            kind: monaco.languages.CompletionItemKind.Value,
+            insertText: '"${1:value}"',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: 'String value'
+          },
+          {
+            label: 'number',
+            kind: monaco.languages.CompletionItemKind.Value,
+            insertText: '${1:0}',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: 'Number value'
+          },
+          {
+            label: 'boolean',
+            kind: monaco.languages.CompletionItemKind.Value,
+            insertText: '${1|true,false|}',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: 'Boolean value (true/false)'
+          },
+          {
+            label: 'null',
+            kind: monaco.languages.CompletionItemKind.Value,
+            insertText: 'null',
+            documentation: 'Null value'
+          },
+          {
+            label: 'object',
+            kind: monaco.languages.CompletionItemKind.Struct,
+            insertText: '{\n  "${1:key}": "${2:value}"\n}',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: 'JSON object'
+          },
+          {
+            label: 'array',
+            kind: monaco.languages.CompletionItemKind.Struct,
+            insertText: '[\n  "${1:item}"\n]',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: 'JSON array'
+          }
+        ];
+        return { suggestions };
+      }
+    });
+
+    // Enhanced hover provider with JSON path information
+    monaco.languages.registerHoverProvider('json', {
+      provideHover: (model: any, position: any) => {
+        const word = model.getWordAtPosition(position);
+        if (!word) return null;
+        
+        const lineContent = model.getLineContent(position.lineNumber);
+        const isKey = lineContent.includes(`"${word.word}":`);
+        const isStringValue = lineContent.includes(`"${word.word}"`) && !isKey;
+        
+        let contents = [];
+        
+        if (isKey) {
+          contents.push({ value: `**JSON Key**: \`${word.word}\`` });
+          contents.push({ value: 'This is a JSON object property key' });
+        } else if (isStringValue) {
+          contents.push({ value: `**JSON String Value**: \`${word.word}\`` });
+          contents.push({ value: `Length: ${word.word.length} characters` });
+        } else if (!isNaN(Number(word.word))) {
+          contents.push({ value: `**JSON Number**: \`${word.word}\`` });
+          const num = Number(word.word);
+          contents.push({ value: `Type: ${Number.isInteger(num) ? 'Integer' : 'Float'}` });
+        }
+        
+        return contents.length > 0 ? { contents } : null;
+      }
+    });
+
     // Cyberpunk Theme - Neon colors with purple/magenta/cyan palette
     monaco.editor.defineTheme('cyberpunk', {
       base: 'vs-dark',
@@ -261,57 +358,359 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
   const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
     setIsEditorReady(true);
+    
+    // Status bar information tracking
+    const updateStatusInfo = () => {
+      const model = editor.getModel();
+      if (!model) return;
+      
+      const position = editor.getPosition();
+      const selection = editor.getSelection();
+      const content = model.getValue();
+      
+      let jsonValid = true;
+      try {
+        if (content.trim()) {
+          JSON.parse(content);
+        }
+      } catch (e) {
+        jsonValid = false;
+      }
+      
+      setStatusInfo({
+        line: position?.lineNumber || 1,
+        column: position?.column || 1,
+        characters: content.length,
+        lines: model.getLineCount(),
+        selection: selection && !selection.isEmpty() 
+          ? `${Math.abs(selection.endLineNumber - selection.startLineNumber) + 1} lines, ${model.getValueInRange(selection).length} chars`
+          : '',
+        jsonValid,
+        language: 'JSON'
+      });
+    };
+    
+    // Update status on cursor position change
+    editor.onDidChangeCursorPosition(updateStatusInfo);
+    
+    // Update status on selection change
+    editor.onDidChangeCursorSelection(updateStatusInfo);
+    
+    // Update status on content change
+    editor.getModel()?.onDidChangeContent(() => {
+      setTimeout(updateStatusInfo, 100); // Small delay for performance
+    });
+    
+    // Initial status update
+    updateStatusInfo();
 
     editor.updateOptions({
+      // Font and appearance
       fontSize: 14,
       fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+      fontLigatures: true,
       lineNumbers: 'on',
-      minimap: { enabled: false },
+      lineNumbersMinChars: 3,
+      
+      // Enhanced minimap with better functionality
+      minimap: { 
+        enabled: true,
+        size: 'proportional',
+        showSlider: 'mouseover',
+        renderCharacters: true,
+        maxColumn: 120,
+        scale: 1
+      },
+      
+      // Scrolling improvements
       scrollBeyondLastLine: false,
+      smoothScrolling: true,
+      mouseWheelScrollSensitivity: 1,
+      fastScrollSensitivity: 5,
+      scrollbar: {
+        vertical: 'auto',
+        horizontal: 'auto',
+        useShadows: true,
+        verticalScrollbarSize: 12,
+        horizontalScrollbarSize: 12,
+        arrowSize: 11
+      },
+      
+      // Word wrapping and layout
       wordWrap: 'on',
+      wordWrapColumn: 120,
       automaticLayout: true,
+      
+      // Indentation and formatting
       tabSize: 2,
       insertSpaces: true,
       detectIndentation: true,
+      trimAutoWhitespace: true,
+      
+      // Enhanced folding
       folding: true,
       foldingStrategy: 'indentation',
-      showFoldingControls: 'always',
-      bracketPairColorization: { enabled: true },
+      showFoldingControls: 'mouseover',
+      foldingHighlight: true,
+      unfoldOnClickAfterEndOfLine: true,
+      
+      // Advanced bracket features
+      bracketPairColorization: { 
+        enabled: true,
+        independentColorPoolPerBracketType: true
+      },
+      matchBrackets: 'always',
+      
+      // Enhanced guides
       guides: {
         indentation: true,
-        bracketPairs: true,
-        bracketPairsHorizontal: true,
+        bracketPairs: 'active',
+        bracketPairsHorizontal: 'active',
+        highlightActiveIndentation: true
       },
+      
+      // Suggestions and intellisense
+      quickSuggestions: {
+        other: true,
+        comments: true,
+        strings: true
+      },
+      quickSuggestionsDelay: 100,
+      suggestOnTriggerCharacters: true,
+      acceptSuggestionOnEnter: 'on',
+      acceptSuggestionOnCommitCharacter: true,
+      snippetSuggestions: 'inline',
+      wordBasedSuggestions: 'currentDocument',
+      
+      // Multi-cursor support
+      multiCursorModifier: 'ctrlCmd',
+      multiCursorMergeOverlapping: true,
+      
+      // Find and replace improvements
+      find: {
+        seedSearchStringFromSelection: 'always',
+        autoFindInSelection: 'multiline'
+      },
+      
+      // Hover and tooltips
+      hover: {
+        enabled: true,
+        delay: 300,
+        sticky: true
+      },
+      
+      // Performance optimizations
+      largeFileOptimizations: true,
+      
+      // Error and warning indicators
+      glyphMargin: true,
+      
+      // Selection and cursor
+      selectionHighlight: true,
+      occurrencesHighlight: 'singleFile',
+      cursorStyle: 'line',
+      cursorWidth: 2,
+      cursorBlinking: 'smooth',
+      hideCursorInOverviewRuler: false,
+      
+      // Enhanced editing features
+      formatOnType: true,
+      formatOnPaste: true,
+      autoIndent: 'full',
+      dragAndDrop: true,
+      copyWithSyntaxHighlighting: true,
+      
+      // Code lens and breadcrumbs (if supported)
+      codeLens: false, // JSON doesn't typically need code lens
+      
+      // Accessibility
+      accessibilitySupport: 'on',
+      
+      // Performance for large files
+      stopRenderingLineAfter: 1000,
+      maxTokenizationLineLength: 2000
     });
+    
+    // Add JSON validation with enhanced error reporting
+    const model = editor.getModel();
+    if (model) {
+      const validateJson = () => {
+        const content = model.getValue();
+        if (!content.trim()) {
+          monaco.editor.setModelMarkers(model, 'json', []);
+          return;
+        }
+
+        try {
+          JSON.parse(content);
+          monaco.editor.setModelMarkers(model, 'json', []);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Invalid JSON';
+          let position = { lineNumber: 1, column: 1 };
+          
+          // Enhanced error position detection
+          const positionMatch = errorMessage.match(/at position (\d+)/);
+          if (positionMatch) {
+            const pos = parseInt(positionMatch[1]);
+            position = model.getPositionAt(pos);
+          }
+          
+          // More detailed error messages
+          let enhancedMessage = errorMessage;
+          if (errorMessage.includes('Unexpected token')) {
+            enhancedMessage += ' - Check for missing commas, quotes, or brackets';
+          } else if (errorMessage.includes('Unexpected end')) {
+            enhancedMessage += ' - JSON appears to be incomplete';
+          }
+          
+          monaco.editor.setModelMarkers(model, 'json', [{
+            severity: monaco.MarkerSeverity.Error,
+            message: enhancedMessage,
+            startLineNumber: position.lineNumber,
+            startColumn: position.column,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column + 1
+          }]);
+        }
+      };
+
+      // Debounced validation for better performance
+      let validationTimeout: NodeJS.Timeout;
+      model.onDidChangeContent(() => {
+        clearTimeout(validationTimeout);
+        validationTimeout = setTimeout(validateJson, 300);
+      });
+
+      // Initial validation
+      validateJson();
+    }
   };
 
-  const handleEditorChange = (value: string | undefined) => {
-    onChange(value || '');
-  };
+  // Debounced change handler for better performance
+  const handleEditorChange = useCallback(
+    debounce((value: string | undefined) => {
+      onChange(value || '');
+    }, 300),
+    [onChange]
+  );
+
+  // Setup keyboard shortcuts and commands
+  useEffect(() => {
+    if (isEditorReady && editorRef.current) {
+      const editor = editorRef.current;
+      
+      // Custom keyboard shortcuts
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyJ, () => {
+        // Format JSON
+        const model = editor.getModel();
+        if (model) {
+          try {
+            const value = model.getValue();
+            if (value.trim()) {
+              const formatted = JSON.stringify(JSON.parse(value), null, 2);
+              model.setValue(formatted);
+            }
+          } catch (e) {
+            // If JSON is invalid, don't format
+            console.warn('Cannot format invalid JSON');
+          }
+        }
+      });
+      
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, () => {
+        // Compress JSON (minify)
+        const model = editor.getModel();
+        if (model) {
+          try {
+            const value = model.getValue();
+            if (value.trim()) {
+              const compressed = JSON.stringify(JSON.parse(value));
+              model.setValue(compressed);
+            }
+          } catch (e) {
+            console.warn('Cannot compress invalid JSON');
+          }
+        }
+      });
+      
+      // Enhanced find widget
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF, () => {
+        editor.getAction('actions.find')?.run();
+      });
+      
+      // Replace widget
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyH, () => {
+        editor.getAction('editor.action.startFindReplaceAction')?.run();
+      });
+      
+      // Toggle fold all
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.BracketLeft, () => {
+        editor.getAction('editor.foldAll')?.run();
+      });
+      
+      // Toggle unfold all
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.BracketRight, () => {
+        editor.getAction('editor.unfoldAll')?.run();
+      });
+    }
+  }, [isEditorReady]);
+
+  // Debounce utility function
+  function debounce<T extends (...args: any[]) => void>(func: T, wait: number): T {
+    let timeout: NodeJS.Timeout;
+    return ((...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    }) as T;
+  }
 
   return (
-    <div className={`relative ${className}`}>
-      <Editor
-        height="100%"
-        defaultLanguage="json"
-        value={value}
-        onChange={handleEditorChange}
-        beforeMount={handleBeforeMount}
-        onMount={handleEditorDidMount}
-        theme={effectiveTheme === 'cyberpunk' ? 'cyberpunk' : effectiveTheme === 'dark' ? 'custom-dark' : 'custom-light'}
-        options={{
-          scrollbar: {
-            vertical: 'auto',
-            horizontal: 'auto',
-            useShadows: false,
-            verticalScrollbarSize: 8,
-            horizontalScrollbarSize: 8,
-          },
-          overviewRulerBorder: false,
-          hideCursorInOverviewRuler: true,
-          overviewRulerLanes: 0,
-        }}
-      />
+    <div className={`relative ${className} flex flex-col`}>
+      <div className="flex-1 relative">
+        <Editor
+          height="100%"
+          defaultLanguage="json"
+          value={value}
+          onChange={handleEditorChange}
+          beforeMount={handleBeforeMount}
+          onMount={handleEditorDidMount}
+          theme={effectiveTheme === 'cyberpunk' ? 'cyberpunk' : effectiveTheme === 'dark' ? 'custom-dark' : 'custom-light'}
+          options={{
+            scrollbar: {
+              vertical: 'auto',
+              horizontal: 'auto',
+              useShadows: false,
+              verticalScrollbarSize: 8,
+              horizontalScrollbarSize: 8,
+            },
+            overviewRulerBorder: false,
+            hideCursorInOverviewRuler: true,
+            overviewRulerLanes: 0,
+          }}
+        />
+      </div>
+      
+      {/* Enhanced Status Bar */}
+      <div className="h-6 bg-muted/30 border-t border-border px-3 flex items-center justify-between text-xs text-muted-foreground font-mono">
+        <div className="flex items-center gap-4">
+          <span>Ln {statusInfo.line}, Col {statusInfo.column}</span>
+          {statusInfo.selection && (
+            <span>({statusInfo.selection})</span>
+          )}
+          <span>{statusInfo.characters} chars</span>
+          <span>{statusInfo.lines} lines</span>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <span className={statusInfo.jsonValid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
+            {statusInfo.jsonValid ? '✓ Valid JSON' : '✗ Invalid JSON'}
+          </span>
+          <span>{statusInfo.language}</span>
+          <span className="text-xs opacity-75">
+            Ctrl+J: Format | Ctrl+K: Minify | Ctrl+F: Find
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
