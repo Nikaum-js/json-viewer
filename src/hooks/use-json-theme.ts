@@ -15,7 +15,7 @@ export interface JsonThemeColors {
 export function useJsonTheme() {
   const { theme } = useTheme();
 
-  const getJsonColors = useCallback((isDark: boolean): JsonThemeColors => {
+  const getJsonColors = useCallback((): JsonThemeColors => {
     // Get computed colors from CSS variables (now in hex format)
     const root = document.documentElement;
     const style = getComputedStyle(root);
@@ -40,7 +40,7 @@ export function useJsonTheme() {
 
   const updateJsonColors = useCallback(() => {
     const isDark = theme === 'dark' || theme === 'cyberpunk';
-    const colors = getJsonColors(isDark);
+    const colors = getJsonColors();
     
     // Trigger a custom event to notify other components about color changes
     const event = new CustomEvent('json-theme-change', { 
@@ -56,7 +56,7 @@ export function useJsonTheme() {
   return {
     theme,
     isDark: theme === 'dark' || theme === 'cyberpunk',
-    getJsonColors: () => getJsonColors(theme === 'dark' || theme === 'cyberpunk'),
+    getJsonColors: () => getJsonColors(),
     updateJsonColors,
   };
 }

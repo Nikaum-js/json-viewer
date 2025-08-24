@@ -37,18 +37,7 @@ export const ThemeSwitcher = React.forwardRef<HTMLButtonElement, ThemeSwitcherPr
     }
   };
 
-  const getTitle = () => {
-    switch (theme) {
-      case 'light':
-        return 'Alternar para modo escuro';
-      case 'dark':
-        return 'Alternar para modo cyberpunk';
-      case 'cyberpunk':
-        return 'Alternar para modo claro';
-      case 'system':
-        return 'Alternar para modo claro';
-    }
-  };
+  // Removed unused getTitle function
 
   return (
     <Button

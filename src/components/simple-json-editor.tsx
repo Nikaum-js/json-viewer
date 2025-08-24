@@ -10,7 +10,7 @@ interface SimpleJsonEditorProps {
   className?: string;
 }
 
-export function SimpleJsonEditor({ value, onChange, placeholder, className }: SimpleJsonEditorProps) {
+export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEditorProps) {
   const { theme } = useTheme();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [isEditorReady, setIsEditorReady] = useState(false);

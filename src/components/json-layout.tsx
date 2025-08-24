@@ -6,6 +6,7 @@ export function JsonLayout() {
   const [jsonInput, setJsonInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandAll, setExpandAll] = useState(false);
+  const [viewMode, setViewMode] = useState<'tree' | 'graph'>('tree');
 
   const parsedJson = useMemo(() => {
     if (!jsonInput.trim()) return null;
@@ -105,6 +106,10 @@ export function JsonLayout() {
     }
   }, [jsonInput]);
 
+  const handleViewModeChange = useCallback((mode: 'tree' | 'graph') => {
+    setViewMode(mode);
+  }, []);
+
   return (
     <div className="flex flex-col md:flex-row h-screen bg-background">
       {/* Left Panel - JSON Input */}
@@ -128,6 +133,8 @@ export function JsonLayout() {
           onExpandAll={handleExpandAll}
           onCollapseAll={handleCollapseAll}
           onDownload={handleDownload}
+          viewMode={viewMode}
+          onViewModeChange={handleViewModeChange}
         />
       </div>
     </div>
