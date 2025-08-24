@@ -307,10 +307,10 @@
     transition: color 0.2s ease;
   }
 
-  /* Custom scrollbar styling */
+  /* Custom scrollbar styling - aligned with Monaco Editor */
   .custom-scrollbar {
-    scrollbar-width: auto;
-    scrollbar-color: hsl(var(--border)) transparent;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
     scroll-behavior: smooth;
   }
 
@@ -322,17 +322,17 @@
 
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
-    border-radius: 4px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 4px;
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 2px;
+    border: none;
     transition: background-color 0.2s ease;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.6);
+    background: hsl(var(--muted-foreground) / 0.5);
   }
 
   .custom-scrollbar::-webkit-scrollbar-corner {
@@ -341,30 +341,28 @@
 
   /* Dark theme specific scrollbar adjustments */
   .dark .custom-scrollbar {
-    scrollbar-color: hsl(var(--border)) transparent;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.4) transparent;
   }
 
   .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
+    background: hsl(var(--muted-foreground) / 0.4);
   }
 
   .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.7);
+    background: hsl(var(--muted-foreground) / 0.6);
   }
 
   /* Cyberpunk theme specific scrollbar adjustments */
   .cyberpunk .custom-scrollbar {
-    scrollbar-color: hsl(var(--accent) / 0.6) transparent;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.4) transparent;
   }
 
   .cyberpunk .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: hsl(var(--accent) / 0.6);
-    box-shadow: 0 0 6px hsl(var(--accent) / 0.3);
+    background: hsl(var(--muted-foreground) / 0.4);
   }
 
   .cyberpunk .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--accent) / 0.8);
-    box-shadow: 0 0 8px hsl(var(--accent) / 0.5);
+    background: hsl(var(--muted-foreground) / 0.6);
   }
 }
 

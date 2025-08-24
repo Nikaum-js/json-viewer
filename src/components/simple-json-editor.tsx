@@ -2,10 +2,7 @@ import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "./theme-provider";
-import { useMonacoConfig } from "@/hooks/use-monaco-config";
-import { MonacoSettings } from "./monaco-settings";
-import { Button } from "./ui/button";
-import { Settings } from "lucide-react";
+import { MonacoStatusBar } from "./monaco-status-bar";
 
 interface SimpleJsonEditorProps {
   value: string;
@@ -14,22 +11,11 @@ interface SimpleJsonEditorProps {
   className?: string;
 }
 
-
 export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEditorProps) {
   const { theme } = useTheme();
-  const { config, getMonacoOptions } = useMonacoConfig();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-  const [isEditorReady, setIsEditorReady] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [statusInfo, setStatusInfo] = useState({
-    line: 1,
-    column: 1,
-    characters: 0,
-    lines: 1,
-    selection: '',
-    jsonValid: true,
-    language: 'JSON'
-  });
+  const [indentationMode, setIndentationMode] = useState<'spaces' | 'tabs'>('spaces');
+  const [indentationSize, setIndentationSize] = useState(2);
 
   const getEffectiveTheme = () => {
     if (theme === 'system') {
@@ -257,12 +243,10 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
       }
     });
   };
-  
+
   useEffect(() => {
-    if (isEditorReady && editorRef.current) {
-      // Redefinir temas com cores atuais das variáveis CSS
-      
-      // Light Theme - usando variáveis CSS
+    if (editorRef.current) {
+      // Light Theme - using CSS variables
       monaco.editor.defineTheme('custom-light', {
         base: 'vs',
         inherit: true,
@@ -291,7 +275,7 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
         }
       });
 
-      // Dark Theme - usando variáveis CSS  
+      // Dark Theme - using CSS variables  
       monaco.editor.defineTheme('custom-dark', {
         base: 'vs-dark', 
         inherit: true,
@@ -320,7 +304,7 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
         }
       });
 
-      // Cyberpunk Theme - usando variáveis CSS cyberpunk
+      // Cyberpunk Theme - using CSS cyberpunk variables
       monaco.editor.defineTheme('cyberpunk', {
         base: 'vs-dark',
         inherit: true,
@@ -359,88 +343,38 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
       
       monaco.editor.setTheme(getMonacoTheme());
     }
-  }, [theme, effectiveTheme, isEditorReady]);
+  }, [theme, effectiveTheme]);
+
+  const handleLanguageClick = () => {
+    // For now, JSON is the only language, but this could be expanded
+    console.log('Language selector clicked');
+  };
+
+  const handleIndentationClick = () => {
+    if (!editorRef.current) return;
+    
+    // Toggle between spaces and tabs
+    const newMode = indentationMode === 'spaces' ? 'tabs' : 'spaces';
+    const newSize = newMode === 'spaces' ? 2 : 4;
+    
+    setIndentationMode(newMode);
+    setIndentationSize(newSize);
+    
+    // Update editor options
+    editorRef.current.updateOptions({
+      insertSpaces: newMode === 'spaces',
+      tabSize: newSize
+    });
+    
+    // Optional: Format the current document with new indentation
+    const model = editorRef.current.getModel();
+    if (model) {
+      editorRef.current.getAction('editor.action.formatDocument')?.run();
+    }
+  };
 
   const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
-    setIsEditorReady(true);
-    
-    // Status bar information tracking
-    const updateStatusInfo = () => {
-      const model = editor.getModel();
-      if (!model) return;
-      
-      const position = editor.getPosition();
-      const selection = editor.getSelection();
-      const content = model.getValue();
-      
-      let jsonValid = true;
-      try {
-        if (content.trim()) {
-          JSON.parse(content);
-        }
-      } catch (e) {
-        jsonValid = false;
-      }
-      
-      setStatusInfo({
-        line: position?.lineNumber || 1,
-        column: position?.column || 1,
-        characters: content.length,
-        lines: model.getLineCount(),
-        selection: selection && !selection.isEmpty() 
-          ? `${Math.abs(selection.endLineNumber - selection.startLineNumber) + 1} lines, ${model.getValueInRange(selection).length} chars`
-          : '',
-        jsonValid,
-        language: 'JSON'
-      });
-    };
-    
-    // Update status on cursor position change
-    editor.onDidChangeCursorPosition(updateStatusInfo);
-    
-    // Update status on selection change
-    editor.onDidChangeCursorSelection(updateStatusInfo);
-    
-    // Update status on content change
-    editor.getModel()?.onDidChangeContent(() => {
-      setTimeout(updateStatusInfo, 100); // Small delay for performance
-    });
-    
-    // Initial status update
-    updateStatusInfo();
-
-    // Apply VS Code-style configuration
-    const monacoOptions = getMonacoOptions();
-    editor.updateOptions({
-      ...monacoOptions,
-      // Keep existing Monaco-specific settings
-      lineNumbers: 'on',
-      lineNumbersMinChars: 3,
-      automaticLayout: true,
-      wordWrapColumn: 120,
-      mouseWheelScrollSensitivity: 1,
-      fastScrollSensitivity: 5,
-      foldingStrategy: 'indentation',
-      foldingHighlight: true,
-      unfoldOnClickAfterEndOfLine: true,
-      matchBrackets: 'always',
-      quickSuggestions: {
-        other: true,
-        comments: true,
-        strings: true
-      },
-      quickSuggestionsDelay: 100,
-      suggestOnTriggerCharacters: true,
-      acceptSuggestionOnEnter: 'on',
-      snippetSuggestions: 'inline',
-      wordBasedSuggestions: 'currentDocument',
-      glyphMargin: true,
-      cursorStyle: 'line',
-      cursorWidth: 2,
-      hideCursorInOverviewRuler: false,
-      codeLens: false // JSON doesn't typically need code lens
-    });
     
     // Add JSON validation with enhanced error reporting
     const model = editor.getModel();
@@ -505,107 +439,6 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
     [onChange]
   );
 
-  // Setup keyboard shortcuts and commands
-  useEffect(() => {
-    if (isEditorReady && editorRef.current) {
-      const editor = editorRef.current;
-      
-      // Apply latest configuration when config changes
-      const monacoOptions = getMonacoOptions();
-      editor.updateOptions({
-        ...monacoOptions,
-        // Keep existing Monaco-specific settings
-        lineNumbers: 'on',
-        lineNumbersMinChars: 3,
-        automaticLayout: true,
-        wordWrapColumn: 120,
-        mouseWheelScrollSensitivity: 1,
-        fastScrollSensitivity: 5,
-        foldingStrategy: 'indentation',
-        foldingHighlight: true,
-        unfoldOnClickAfterEndOfLine: true,
-        matchBrackets: 'always',
-        quickSuggestions: {
-          other: true,
-          comments: true,
-          strings: true
-        },
-        quickSuggestionsDelay: 100,
-        suggestOnTriggerCharacters: true,
-        acceptSuggestionOnEnter: 'on',
-        snippetSuggestions: 'inline',
-        wordBasedSuggestions: 'currentDocument',
-        glyphMargin: true,
-        cursorStyle: 'line',
-        cursorWidth: 2,
-        hideCursorInOverviewRuler: false,
-        codeLens: false
-      });
-      
-      // Custom keyboard shortcuts
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyJ, () => {
-        if (config.formatOnSave) {
-          // Format JSON
-          const model = editor.getModel();
-          if (model) {
-            try {
-              const value = model.getValue();
-              if (value.trim()) {
-                const formatted = JSON.stringify(JSON.parse(value), null, config.tabSize);
-                model.setValue(formatted);
-              }
-            } catch (e) {
-              console.warn('Cannot format invalid JSON');
-            }
-          }
-        }
-      });
-      
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, () => {
-        // Compress JSON (minify)
-        const model = editor.getModel();
-        if (model) {
-          try {
-            const value = model.getValue();
-            if (value.trim()) {
-              const compressed = JSON.stringify(JSON.parse(value));
-              model.setValue(compressed);
-            }
-          } catch (e) {
-            console.warn('Cannot compress invalid JSON');
-          }
-        }
-      });
-      
-      // Settings shortcut
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Comma, () => {
-        setShowSettings(true);
-      });
-      
-      // Enhanced find widget
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF, () => {
-        editor.getAction('actions.find')?.run();
-      });
-      
-      // Replace widget
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyH, () => {
-        editor.getAction('editor.action.startFindReplaceAction')?.run();
-      });
-      
-      // Toggle fold all
-      if (config.folding) {
-        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.BracketLeft, () => {
-          editor.getAction('editor.foldAll')?.run();
-        });
-        
-        // Toggle unfold all
-        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.BracketRight, () => {
-          editor.getAction('editor.unfoldAll')?.run();
-        });
-      }
-    }
-  }, [isEditorReady, config, getMonacoOptions]);
-
   // Debounce utility function
   function debounce<T extends (...args: any[]) => void>(func: T, wait: number): T {
     let timeout: NodeJS.Timeout;
@@ -616,21 +449,8 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
   }
 
   return (
-    <div className={`relative ${className} flex flex-col`}>
-      {/* Settings Button */}
-      <div className="absolute top-2 right-2 z-10">
-        <Button
-          variant="ghost" 
-          size="sm"
-          onClick={() => setShowSettings(true)}
-          className="opacity-50 hover:opacity-100 transition-opacity p-2 h-8 w-8"
-          title="Editor Settings (Ctrl+,)"
-        >
-          <Settings className="h-3 w-3" />
-        </Button>
-      </div>
-      
-      <div className="flex-1 relative">
+    <div className={`flex flex-col ${className}`}>
+      <div className="flex-1">
         <Editor
           height="100%"
           defaultLanguage="json"
@@ -650,43 +470,15 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
             overviewRulerBorder: false,
             hideCursorInOverviewRuler: true,
             overviewRulerLanes: 0,
+            insertSpaces: indentationMode === 'spaces',
+            tabSize: indentationSize,
           }}
         />
       </div>
-      
-      {/* Enhanced Status Bar */}
-      <div className="h-6 bg-muted/30 border-t border-border px-3 flex items-center justify-between text-xs text-muted-foreground font-mono">
-        <div className="flex items-center gap-4">
-          <span>Ln {statusInfo.line}, Col {statusInfo.column}</span>
-          {statusInfo.selection && (
-            <span>({statusInfo.selection})</span>
-          )}
-          <span>{statusInfo.characters} chars</span>
-          <span>{statusInfo.lines} lines</span>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <span className={statusInfo.jsonValid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
-            {statusInfo.jsonValid ? '✓ Valid JSON' : '✗ Invalid JSON'}
-          </span>
-          <span>{statusInfo.language}</span>
-          <span className="opacity-75">Font: {config.fontFamily.split(',')[0].replace(/'/g, '')}</span>
-          <span className="opacity-75">{config.fontSize}px</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowSettings(true)}
-            className="h-4 px-2 text-xs opacity-75 hover:opacity-100"
-          >
-            Settings
-          </Button>
-        </div>
-      </div>
-      
-      {/* Monaco Settings Modal */}
-      <MonacoSettings 
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
+      <MonacoStatusBar
+        editor={editorRef.current}
+        onLanguageClick={handleLanguageClick}
+        onIndentationClick={handleIndentationClick}
       />
     </div>
   );
