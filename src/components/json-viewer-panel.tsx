@@ -198,7 +198,7 @@ export function JsonViewerPanel({
         </div>
       </div>
       
-      <CardContent className="flex-1 p-4 overflow-auto">
+      <CardContent className="flex-1 p-4 overflow-auto custom-scrollbar">
         {renderContent()}
       </CardContent>
     </Card>

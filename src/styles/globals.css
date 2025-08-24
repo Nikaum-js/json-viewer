@@ -306,6 +306,65 @@
   .json-highlight * {
     transition: color 0.2s ease;
   }
+
+  /* Custom scrollbar styling */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+    scroll-behavior: smooth;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.6);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* Dark theme specific scrollbar adjustments */
+  .dark .custom-scrollbar {
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.7);
+  }
+
+  /* Cyberpunk theme specific scrollbar adjustments */
+  .cyberpunk .custom-scrollbar {
+    scrollbar-color: hsl(var(--accent) / 0.6) transparent;
+  }
+
+  .cyberpunk .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--accent) / 0.6);
+    box-shadow: 0 0 6px hsl(var(--accent) / 0.3);
+  }
+
+  .cyberpunk .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent) / 0.8);
+    box-shadow: 0 0 8px hsl(var(--accent) / 0.5);
+  }
 }
 
 @layer base {
