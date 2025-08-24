@@ -555,7 +555,7 @@ function TreeNode({
           <span className={`font-semibold text-sm mr-2 ${
             shouldHighlight 
               ? 'bg-yellow-200 dark:bg-yellow-800/50 px-1 rounded' 
-              : 'text-slate-700 dark:text-slate-300'
+              : 'text-foreground'
           }`}>
             {nodeKey}
             <span className="text-muted-foreground ml-1 font-normal">:</span>
