@@ -55,13 +55,6 @@ function createCustomTheme(isDark: boolean): monaco.editor.IStandaloneThemeData 
     selection: isDark ? '#264f78' : '#0969da'
   };
 
-  // Debug log to verify colors
-  console.log('Monaco Editor Colors:', {
-    isDark,
-    backgroundColor,
-    baseColors
-  });
-
   return {
     base: isDark ? 'vs-dark' : 'vs',
     inherit: true,

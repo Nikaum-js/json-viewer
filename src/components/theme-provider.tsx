@@ -31,7 +31,6 @@ export function ThemeProvider({
   )
 
   useEffect(() => {
-    console.log('🎨 ThemeProvider applying theme:', theme);
     const root = window.document.documentElement
 
     root.classList.remove("light", "dark", "cyberpunk")
@@ -42,12 +41,10 @@ export function ThemeProvider({
         ? "dark"
         : "light"
 
-      console.log('🎨 System theme resolved to:', systemTheme);
       root.classList.add(systemTheme)
       return
     }
 
-    console.log('🎨 Adding theme class:', theme);
     root.classList.add(theme)
   }, [theme])
 

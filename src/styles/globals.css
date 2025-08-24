@@ -364,6 +364,84 @@
   .cyberpunk .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.6);
   }
+
+  /* Touch-friendly utility classes for mobile responsiveness */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    @apply flex items-center justify-center;
+  }
+
+  .safe-area {
+    padding: 16px;
+  }
+
+  .mobile-hidden {
+    @apply hidden md:block;
+  }
+
+  .mobile-only {
+    @apply block md:hidden;
+  }
+
+  /* Enhanced touch feedback */
+  .touch-feedback {
+    @apply transition-all duration-150 ease-out;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .touch-feedback:active {
+    @apply transform scale-95;
+  }
+
+  /* Mobile-optimized button styles */
+  .mobile-button {
+    @apply touch-target touch-feedback;
+    @apply rounded-md font-medium text-sm;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+    @apply active:bg-accent/80;
+  }
+
+  /* Mobile-friendly input styles */
+  .mobile-input {
+    @apply text-base; /* Prevents zoom on iOS */
+    @apply rounded-md border border-input bg-background px-3 py-2;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  /* Mobile spacing utilities */
+  .mobile-spacing {
+    @apply space-y-4 md:space-y-2;
+  }
+
+  /* Touch-optimized margins and paddings */
+  .touch-spacing {
+    @apply p-3 md:p-2;
+    @apply gap-3 md:gap-2;
+  }
+
+  /* Mobile-first responsive text sizes */
+  .responsive-text {
+    @apply text-base md:text-sm;
+  }
+
+  /* Mobile navigation enhancements */
+  .mobile-nav {
+    @apply sticky top-0 z-50;
+    @apply border-b border-border;
+    @apply bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90;
+  }
+
+  /* Mobile panel transitions */
+  .mobile-panel-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Touch-optimized scrolling */
+  .touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 }
 
 @layer base {

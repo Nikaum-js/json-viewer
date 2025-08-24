@@ -1,8 +1,9 @@
+import { useMediaQuery } from "@/hooks/use-media-query";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTheme } from "./theme-provider";
 import { MonacoStatusBar } from "./monaco-status-bar";
+import { useTheme } from "./theme-provider";
 
 interface SimpleJsonEditorProps {
   value: string;
@@ -16,6 +17,10 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [indentationMode, setIndentationMode] = useState<'spaces' | 'tabs'>('spaces');
   const [indentationSize, setIndentationSize] = useState(2);
+  
+  // Mobile and touch device detection
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const isTouch = useMediaQuery('(hover: none) and (pointer: coarse)');
 
   const getEffectiveTheme = () => {
     if (theme === 'system') {
@@ -346,7 +351,6 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
   }, [theme, effectiveTheme]);
 
   const handleLanguageClick = () => {
-    // For now, JSON is the only language, but this could be expanded
     console.log('Language selector clicked');
   };
 
@@ -460,18 +464,68 @@ export function SimpleJsonEditor({ value, onChange, className }: SimpleJsonEdito
           onMount={handleEditorDidMount}
           theme={effectiveTheme === 'cyberpunk' ? 'cyberpunk' : effectiveTheme === 'dark' ? 'custom-dark' : 'custom-light'}
           options={{
+            // Responsive scrollbar configuration
             scrollbar: {
               vertical: 'auto',
               horizontal: 'auto',
               useShadows: false,
-              verticalScrollbarSize: 8,
-              horizontalScrollbarSize: 8,
+              verticalScrollbarSize: isMobile ? 12 : 8, // Larger scrollbars on mobile
+              horizontalScrollbarSize: isMobile ? 12 : 8,
+              alwaysConsumeMouseWheel: false, // Better mobile scrolling
             },
             overviewRulerBorder: false,
             hideCursorInOverviewRuler: true,
             overviewRulerLanes: 0,
+            
+            // Mobile-optimized editor options
+            fontSize: isMobile ? 16 : 14, // Prevent zoom on iOS
+            lineHeight: isMobile ? 24 : 20,
+            wordWrap: isMobile ? 'on' : 'off', // Enable word wrap on mobile
+            wrappingStrategy: 'advanced',
+            
+            // Touch and mobile-friendly settings
+            mouseWheelZoom: !isMobile, // Disable zoom on mobile to prevent conflicts
+            
+            // Improved selection and cursor for touch
+            cursorBlinking: 'smooth',
+            cursorSmoothCaretAnimation: 'on',
+            dragAndDrop: !isMobile, // Disable drag-drop on mobile for better touch
+            
+            // Performance optimizations for mobile
+            smoothScrolling: true,
+            renderLineHighlight: isMobile ? 'none' : 'line',
+            renderWhitespace: isMobile ? 'none' : 'selection',
+            
+            // Accessibility and usability
+            accessibilitySupport: 'auto',
+            autoClosingBrackets: 'always',
+            autoClosingQuotes: 'always',
+            autoSurround: 'languageDefined',
+            
+            // Mobile keyboard handling
+            acceptSuggestionOnEnter: isMobile ? 'off' : 'on', // Prevent accidental suggestions on mobile
+            quickSuggestions: !isMobile, // Disable quick suggestions on mobile
+            suggestOnTriggerCharacters: !isMobile,
+            
+            // Indentation settings
             insertSpaces: indentationMode === 'spaces',
             tabSize: indentationSize,
+            
+            // Mobile-specific features
+            ...(isMobile && {
+              minimap: { enabled: false }, // Disable minimap on mobile
+              folding: false, // Disable code folding on mobile
+              glyphMargin: false, // Remove glyph margin to save space
+              lineNumbers: 'off', // Hide line numbers on very small screens if needed
+              wordWrapColumn: 40, // Wrap at reasonable column count
+              automaticLayout: true, // Auto-resize for orientation changes
+            }),
+            
+            // Touch-specific settings
+            ...(isTouch && {
+              mouseWheelScrollSensitivity: 0.5, // Reduce scroll sensitivity
+              fastScrollSensitivity: 3, // Adjust for touch scrolling
+            })
           }}
         />
       </div>

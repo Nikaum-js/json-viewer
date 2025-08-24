@@ -1,12 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 import { JsonInputPanel } from "./json-input-panel";
 import { JsonViewerPanel } from "./json-viewer-panel";
+import { MobileTabs } from "./mobile-tabs";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export function JsonLayout() {
   const [jsonInput, setJsonInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandAll, setExpandAll] = useState(false);
   const [viewMode, setViewMode] = useState<'tree' | 'graph'>('tree');
+  const [mobileActivePanel, setMobileActivePanel] = useState<'editor' | 'viewer'>('editor');
+  
+  // Mobile breakpoint detection (md: 768px)
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const parsedJson = useMemo(() => {
     if (!jsonInput.trim()) return null;
@@ -110,10 +116,53 @@ export function JsonLayout() {
     setViewMode(mode);
   }, []);
 
+  const handleMobilePanelChange = useCallback((panel: 'editor' | 'viewer') => {
+    setMobileActivePanel(panel);
+  }, []);
+
+  if (isMobile) {
+    // Mobile: Single-pane layout with tabs
+    return (
+      <div className="flex flex-col h-screen bg-background">
+        {/* Mobile Navigation Tabs */}
+        <MobileTabs 
+          activePanel={mobileActivePanel}
+          onPanelChange={handleMobilePanelChange}
+        />
+        
+        {/* Active Panel */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {mobileActivePanel === 'editor' ? (
+            <JsonInputPanel
+              value={jsonInput}
+              onChange={handleJsonInputChange}
+              onLoadExample={handleLoadExample}
+              onUploadFile={handleUploadFile}
+              onPaste={handlePaste}
+            />
+          ) : (
+            <JsonViewerPanel
+              data={parsedJson}
+              searchTerm={searchTerm}
+              expandAll={expandAll}
+              onSearchChange={handleSearchChange}
+              onExpandAll={handleExpandAll}
+              onCollapseAll={handleCollapseAll}
+              onDownload={handleDownload}
+              viewMode={viewMode}
+              onViewModeChange={handleViewModeChange}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: Side-by-side layout
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-background">
+    <div className="flex flex-row h-screen bg-background">
       {/* Left Panel - JSON Input */}
-      <div className="w-full md:w-2/5 h-1/2 md:h-full border-b md:border-b-0 md:border-r border-border flex flex-col">
+      <div className="w-2/5 h-full border-r border-border flex flex-col">
         <JsonInputPanel
           value={jsonInput}
           onChange={handleJsonInputChange}
@@ -124,7 +173,7 @@ export function JsonLayout() {
       </div>
       
       {/* Right Panel - JSON Viewer */}
-      <div className="flex-1 h-1/2 md:h-full flex flex-col">
+      <div className="flex-1 h-full flex flex-col">
         <JsonViewerPanel
           data={parsedJson}
           searchTerm={searchTerm}

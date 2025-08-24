@@ -1,6 +1,6 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Zap } from "lucide-react";
+import React from "react";
 import { useTheme } from "./theme-provider";
 
 type Theme = 'light' | 'dark' | 'system' | 'cyberpunk';
@@ -12,7 +12,6 @@ interface ThemeSwitcherProps {
 export const ThemeSwitcher = React.forwardRef<HTMLButtonElement, ThemeSwitcherProps>(
   ({ className }, ref) => {
   const { theme, setTheme: setThemeContext } = useTheme();
-  console.log('🎯 ThemeSwitcher render - current theme:', theme);
 
   const cycleTheme = () => {
     const themes: Theme[] = ['light', 'dark', 'cyberpunk'];
@@ -20,7 +19,6 @@ export const ThemeSwitcher = React.forwardRef<HTMLButtonElement, ThemeSwitcherPr
     const nextIndex = (currentIndex + 1) % themes.length;
     const nextTheme = themes[nextIndex];
     
-    console.log('🔄 ThemeSwitcher cycling from', theme, 'to', nextTheme);
     setThemeContext(nextTheme);
   };
 
