@@ -67,14 +67,14 @@ Visualizar • Analisar • Formatar
 variant="ghost"
 size="icon"
 asChild
-className="h-7 w-7 md:h-8 md:w-8"
+className="h-9 w-9"
 >
 <a
 href="https://github.com/nikaum-js"
 target="_blank"
 rel="noopener noreferrer"
 >
-<Github className="h-3 w-3" />
+<Github className="h-5 w-5" />
 <span className="sr-only">GitHub</span>
 </a>
 </Button>

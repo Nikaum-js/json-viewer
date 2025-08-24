@@ -27,13 +27,13 @@ export const ThemeSwitcher = React.forwardRef<HTMLButtonElement, ThemeSwitcherPr
   const getIcon = () => {
     switch (theme) {
       case 'light':
-        return <Sun className="h-4 w-4" />;
+        return <Sun className="h-5 w-5" />;
       case 'dark':
-        return <Moon className="h-4 w-4" />;
+        return <Moon className="h-5 w-5" />;
       case 'cyberpunk':
-        return <Zap className="h-4 w-4" />;
+        return <Zap className="h-5 w-5" />;
       case 'system':
-        return <Zap className="h-4 w-4" />;
+        return <Zap className="h-5 w-5" />;
     }
   };
 
@@ -56,7 +56,7 @@ export const ThemeSwitcher = React.forwardRef<HTMLButtonElement, ThemeSwitcherPr
       variant="ghost"
       size="icon"
       onClick={cycleTheme}
-      className={`h-10 w-10 ${className}`}
+      className={`h-9 w-9 ${className}`}
     >
       {getIcon()}
       <span className="sr-only">Alternar tema</span>
