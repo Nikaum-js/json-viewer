@@ -383,7 +383,7 @@ function CopyMenu({ value, jsonPath }: CopyMenuProps) {
       <Button
         variant="ghost"
         size="sm"
-        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-6 w-6"
+        className="copy-menu opacity-0 transition-opacity p-1 h-6 w-6"
         onClick={() => setShowMenu(!showMenu)}
         onBlur={() => setTimeout(() => setShowMenu(false), 200)}
       >
@@ -516,7 +516,7 @@ function TreeNode({
 
   return (
     <div className="group relative">
-      <div className="flex items-center gap-2 py-1 hover:bg-accent/20 rounded-md transition-all duration-200 -mx-1 px-1">
+      <div className="flex items-center gap-2 py-1 hover:bg-accent/20 rounded-md transition-all duration-200 -mx-1 px-1 hover:[&_.copy-menu]:opacity-100">
         {/* Tree connection lines */}
         <TreeLines 
           depth={depth} 
