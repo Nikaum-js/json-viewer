@@ -206,13 +206,13 @@ export function SimpleJsonEditor({ value, onChange, placeholder, className }: Si
           { token: 'delimiter', foreground: getCSSColor('--json-bracket').substring(1) },
         ],
         colors: {
-          'editor.background': getCSSColor('--background'),
+          'editor.background': getCSSColor('--card'),
           'editor.foreground': getCSSColor('--foreground'),
           'editorLineNumber.foreground': getCSSColor('--muted-foreground'),
           'editorCursor.foreground': getCSSColor('--primary'),
-          'editor.selectionBackground': getCSSColor('--accent'),
-          'editor.lineHighlightBackground': getCSSColor('--muted'),
-          'editorBracketMatch.background': getCSSColor('--accent'),
+          'editor.selectionBackground': getCSSColor('--accent') + '40',
+          'editor.lineHighlightBackground': getCSSColor('--accent') + '20',
+          'editorBracketMatch.background': getCSSColor('--accent') + '40',
           'editorBracketMatch.border': getCSSColor('--primary'),
         }
       });
