@@ -114,10 +114,10 @@ Load Example
 variant="outline"
 size="sm"
 onClick={onLoadExample}
-className="text-xs sm:hidden px-2"
+className="text-xs sm:hidden w-9 h-9 p-0"
 title="Load Example"
 >
-<FileText className="h-3 w-3" />
+<FileText className="h-4 w-4" />
 </Button>
 <Button
 variant="outline"
@@ -126,7 +126,7 @@ onClick={handleUploadClick}
 className="text-xs"
 title="Upload File"
 >
-<Upload className="h-3 w-3 sm:mr-1" />
+<Upload className="h-4 w-4 sm:mr-1" />
 <span className="hidden sm:inline">Upload</span>
 </Button>
 <Button
@@ -136,7 +136,7 @@ onClick={onPaste}
 className="text-xs"
 title="Paste from Clipboard"
 >
-<Clipboard className="h-3 w-3 sm:mr-1" />
+<Clipboard className="h-4 w-4 sm:mr-1" />
 <span className="hidden sm:inline">Paste</span>
 </Button>
 </div>

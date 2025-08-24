@@ -62,7 +62,7 @@ export function JsonViewerPanel({
             className="text-xs"
             title="Expand All"
           >
-            <Expand className="h-3 w-3 sm:mr-1" />
+            <Expand className="h-4 w-4 sm:mr-1" />
             <span className="hidden sm:inline">Expand</span>
           </Button>
           <Button 
@@ -73,7 +73,7 @@ export function JsonViewerPanel({
             className="text-xs"
             title="Collapse All"
           >
-            <Minimize className="h-3 w-3 sm:mr-1" />
+            <Minimize className="h-4 w-4 sm:mr-1" />
             <span className="hidden sm:inline">Collapse</span>
           </Button>
           <Button 
@@ -84,7 +84,7 @@ export function JsonViewerPanel({
             className="text-xs"
             title="Download JSON"
           >
-            <Download className="h-3 w-3 sm:mr-1" />
+            <Download className="h-4 w-4 sm:mr-1" />
             <span className="hidden sm:inline">Download</span>
           </Button>
         </div>
