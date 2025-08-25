@@ -143,11 +143,11 @@ export function JsonViewerPanel({
       </CardHeader>
       
       {/* JSON Viewer Panel Header with View Mode Buttons */}
-      <CardHeader className="flex flex-col lg:flex-row lg:items-center justify-between py-3 px-4 border-b border-border bg-muted/30 gap-3 lg:gap-0">
-        <div className="flex items-center gap-2 lg:gap-3 min-w-0">
+      <CardHeader className="flex flex-col md:flex-row md:items-center justify-between py-3 px-4 border-b border-border bg-muted/30 gap-3 md:gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           <div className="flex items-center gap-2 min-w-0">
             <Search className="h-4 w-4 text-primary flex-shrink-0" />
-            <h2 className="text-base lg:text-lg font-semibold text-foreground truncate">{t('viewer.title')}</h2>
+            <h2 className="text-base md:text-lg font-semibold text-foreground truncate">{t('viewer.title')}</h2>
           </div>
           
           {/* View Mode Buttons */}
@@ -166,7 +166,7 @@ export function JsonViewerPanel({
                         disabled={!data || (data as any).error}
                       >
                         <IconComponent className="h-3.5 w-3.5" />
-                        <span className="hidden lg:inline">{mode.label}</span>
+                        <span className="hidden xl:inline">{mode.label}</span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -182,10 +182,10 @@ export function JsonViewerPanel({
           </TooltipProvider>
         </div>
         
-        <div className="flex items-center gap-1 md:gap-2 flex-wrap lg:flex-nowrap min-w-0">
+        <div className="flex items-center gap-1 flex-shrink-0">
           {/* Tree-specific actions */}
           {activeMode === 'tree' && (
-            <div className="flex gap-1">
+            <>
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -195,7 +195,7 @@ export function JsonViewerPanel({
                 title={t('viewer.expandAll')}
               >
                 <Expand className="h-4 w-4" />
-                <span className="hidden lg:inline">{t('viewer.expandAll')}</span>
+                <span className="hidden xl:inline">{t('viewer.expandAll')}</span>
               </Button>
               <Button 
                 variant="outline" 
@@ -206,53 +206,19 @@ export function JsonViewerPanel({
                 title={t('viewer.collapseAll')}
               >
                 <Minimize className="h-4 w-4" />
-                <span className="hidden lg:inline">{t('viewer.collapseAll')}</span>
+                <span className="hidden xl:inline">{t('viewer.collapseAll')}</span>
               </Button>
-            </div>
+            </>
           )}
           
-          {/* Copy actions - Desktop: individual buttons, Mobile: dropdown */}
-          <div className="hidden xl:flex gap-1">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleCopyFormatted}
-              disabled={!data || (data as any).error || !onCopyFormatted}
-              className="text-xs gap-1 transition-colors px-2"
-              title={t('viewer.copyFormatted')}
-            >
-              {copiedState === 'formatted' ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <FileText className="h-4 w-4" />
-              )}
-              <span>{t('viewer.copyFormatted')}</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleCopyMinified}
-              disabled={!data || (data as any).error || !onCopyMinified}
-              className="text-xs gap-1 transition-colors px-2"
-              title={t('viewer.copyMinified')}
-            >
-              {copiedState === 'minified' ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-              <span>{t('viewer.copyMinified')}</span>
-            </Button>
-          </div>
-
-          {/* Copy actions dropdown for mobile/tablet */}
+          {/* Copy actions dropdown - always visible until very large screens */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="outline" 
                 size="sm" 
                 disabled={!data || (data as any).error}
-                className="xl:hidden text-xs gap-1 px-2"
+                className="text-xs gap-1 px-2"
                 title="Copy Options"
               >
                 {copiedState ? (
@@ -260,7 +226,7 @@ export function JsonViewerPanel({
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
-                <span className="hidden md:inline">{t('viewer.copy')}</span>
+                <span className="hidden lg:inline">{t('viewer.copy')}</span>
                 <ChevronDown className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
@@ -302,7 +268,7 @@ export function JsonViewerPanel({
             title="Download JSON"
           >
             <Download className="h-4 w-4" />
-            <span className="hidden md:inline">Download</span>
+            <span className="hidden lg:inline">Download</span>
           </Button>
         </div>
       </CardHeader>
