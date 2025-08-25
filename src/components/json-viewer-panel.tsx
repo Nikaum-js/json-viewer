@@ -134,8 +134,8 @@ export function JsonViewerPanel({
 
   return (
     <Card className="h-full flex flex-col border-0 rounded-none z--2 bg-card pt-3">
-      {/* Empty header for alignment with main header - Mid-size screens only */}
-      <CardHeader className="hidden md:block xl:hidden border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90">
+      {/* Empty header for alignment with main header - Only when header breaks line */}
+      <CardHeader className="hidden md:block min-[1280px]:hidden border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90">
         <div className="flex items-center justify-end py-2">
           {/* Empty space to maintain alignment - responsive height matching left panel */}
           <div className="h-7 md:h-8 w-full"></div>
