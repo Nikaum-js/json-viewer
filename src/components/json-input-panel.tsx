@@ -45,7 +45,7 @@ export function JsonInputPanel({
     <Card className="h-full flex flex-col border-0 rounded-none bg-card">
       {/* Main Application Header - Integrated */}
       <CardHeader className="border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90">
-        <div className="flex items-center justify-between py-2">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between py-2 gap-3 xl:gap-0">
           {/* Left side - Logo, Title and Subtitle */}
           <div className="flex items-center gap-3 md:gap-4">
             <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center">
@@ -84,10 +84,10 @@ export function JsonInputPanel({
         </div>
       </CardHeader>
       {/* JSON Input Panel Header */}
-      <CardHeader className="flex flex-col xl:flex-row xl:items-center justify-between py-3 px-4 lg:px-8 border-b border-border bg-muted/30 gap-3 xl:gap-0">
+      <CardHeader className="flex flex-row items-center justify-between py-3 px-4 lg:px-8 border-b border-border bg-muted/30">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-primary" />
-          <h2 className="text-base xl:text-lg font-semibold text-foreground">{t('editor.title')}</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t('editor.title')}</h2>
         </div>
         <div className="flex gap-1 md:gap-2">
           <Button
