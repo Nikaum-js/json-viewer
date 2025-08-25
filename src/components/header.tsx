@@ -18,7 +18,7 @@ export function Header() {
             </div>
             <div className="flex flex-col">
               <h1 className="text-xl font-bold text-foreground tracking-tight">
-                {/* {t('header.title')} */}
+                {t('header.title')}
               </h1>
               <p className="hidden text-sm text-muted-foreground sm:block font-medium">
                 {t('header.subtitle')}
