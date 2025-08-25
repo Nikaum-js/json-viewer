@@ -186,7 +186,7 @@ export function JsonLayout() {
   return (
     <div className="flex flex-row h-screen bg-background">
       {/* Left Panel - JSON Input */}
-      <div className="w-2/5 xl:w-3/5 h-full border-r border-border flex flex-col">
+      <div className=" w-2/4 h-full border-r border-border flex flex-col">
         <JsonInputPanel
           value={jsonInput}
           onChange={handleJsonInputChange}

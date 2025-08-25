@@ -85,6 +85,7 @@ export function JsonViewerPanel({
   const [activeMode, setActiveMode] = useState<'tree' | 'graph'>(viewMode);
   const [copiedState, setCopiedState] = useState<'formatted' | 'minified' | null>(null);
 
+
   useEffect(() => {
     const timer = setTimeout(() => {
       onSearchChange(debouncedSearchTerm);
@@ -133,15 +134,14 @@ export function JsonViewerPanel({
   }, [data, activeMode, searchTerm, expandAll]);
 
   return (
-    <Card className="h-full flex flex-col border-0 rounded-none z--2 bg-card pt-3">
+    <Card className="h-full flex flex-col border-0 rounded-none z--2 bg-card">
       {/* Empty header for alignment with main header - Only when header breaks line */}
-      <CardHeader className="hidden md:block min-[1280px]:hidden border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90">
+      {/* <CardHeader className="hidden xl:hidden max-xl:hidden border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90">
         <div className="flex items-center justify-end py-2">
-          {/* Empty space to maintain alignment - responsive height matching left panel */}
           <div className="h-7 md:h-8 w-full"></div>
         </div>
-      </CardHeader>
-      
+      </CardHeader> */}
+        
       {/* JSON Viewer Panel Header with View Mode Buttons */}
       <CardHeader className="flex flex-col md:flex-row md:items-center justify-between py-3 px-3 lg:px-4 border-b border-border bg-muted/30 gap-3 md:gap-2">
         <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
