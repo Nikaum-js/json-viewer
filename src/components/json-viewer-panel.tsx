@@ -10,14 +10,18 @@ import {
   ChevronDown,
   ChevronRight,
   Circle,
-  Copy, Download, Expand,
+  Copy, 
+  Download, 
+  Expand,
+  FileText,
   Hash,
   Link,
   Minimize,
   MoreVertical,
   Network,
   Quote,
-  Search, TreePine,
+  Search, 
+  TreePine,
   X
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -56,6 +60,8 @@ interface JsonViewerPanelProps {
   onExpandAll: () => void;
   onCollapseAll: () => void;
   onDownload: () => void;
+  onCopyFormatted?: () => void;
+  onCopyMinified?: () => void;
   viewMode?: 'tree' | 'graph';
   onViewModeChange?: (mode: 'tree' | 'graph') => void;
 }
@@ -68,12 +74,15 @@ export function JsonViewerPanel({
   onExpandAll, 
   onCollapseAll, 
   onDownload,
+  onCopyFormatted,
+  onCopyMinified,
   viewMode = 'tree',
   onViewModeChange
 }: JsonViewerPanelProps) {
   const { t } = useTranslation();
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [activeMode, setActiveMode] = useState<'tree' | 'graph'>(viewMode);
+  const [copiedState, setCopiedState] = useState<'formatted' | 'minified' | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -91,6 +100,22 @@ export function JsonViewerPanel({
     setActiveMode(mode);
     onViewModeChange?.(mode);
   }, [onViewModeChange]);
+
+  const handleCopyFormatted = useCallback(() => {
+    if (onCopyFormatted) {
+      onCopyFormatted();
+      setCopiedState('formatted');
+      setTimeout(() => setCopiedState(null), 2000);
+    }
+  }, [onCopyFormatted]);
+
+  const handleCopyMinified = useCallback(() => {
+    if (onCopyMinified) {
+      onCopyMinified();
+      setCopiedState('minified');
+      setTimeout(() => setCopiedState(null), 2000);
+    }
+  }, [onCopyMinified]);
 
   const renderContent = useCallback(() => {
     if (!data) return <EmptyState />;
@@ -183,6 +208,39 @@ export function JsonViewerPanel({
               </Button>
             </>
           )}
+          
+          {/* Copy buttons - available for both tree and graph modes */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleCopyFormatted}
+            disabled={!data || (data as any).error || !onCopyFormatted}
+            className="text-xs gap-1 transition-colors"
+            title={t('viewer.copyFormatted')}
+          >
+            {copiedState === 'formatted' ? (
+              <Check className="h-4 w-4 text-green-500" />
+            ) : (
+              <FileText className="h-4 w-4" />
+            )}
+            <span className="hidden lg:inline">{t('viewer.copyFormatted')}</span>
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleCopyMinified}
+            disabled={!data || (data as any).error || !onCopyMinified}
+            className="text-xs gap-1 transition-colors"
+            title={t('viewer.copyMinified')}
+          >
+            {copiedState === 'minified' ? (
+              <Check className="h-4 w-4 text-green-500" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+            <span className="hidden lg:inline">{t('viewer.copyMinified')}</span>
+          </Button>
+          
           <Button 
             variant="outline" 
             size="sm" 

@@ -28,6 +28,8 @@
     "search": "Pesquisar chaves e valores...",
     "expandAll": "Expandir Tudo",
     "collapseAll": "Recolher Tudo",
+    "copyFormatted": "Copiar Formatado",
+    "copyMinified": "Copiar Compactado",
     "copyPath": "Copiar Caminho",
     "copyValue": "Copiar Valor",
     "copySubtree": "Copiar Subárvore",

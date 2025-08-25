@@ -112,6 +112,28 @@ export function JsonLayout() {
     }
   }, [jsonInput]);
 
+  const handleCopyFormatted = useCallback(async () => {
+    if (!jsonInput.trim()) return;
+    
+    try {
+      const formatted = JSON.stringify(JSON.parse(jsonInput), null, 2);
+      await navigator.clipboard.writeText(formatted);
+    } catch (error) {
+      console.error('Error copying formatted JSON:', error);
+    }
+  }, [jsonInput]);
+
+  const handleCopyMinified = useCallback(async () => {
+    if (!jsonInput.trim()) return;
+    
+    try {
+      const minified = JSON.stringify(JSON.parse(jsonInput));
+      await navigator.clipboard.writeText(minified);
+    } catch (error) {
+      console.error('Error copying minified JSON:', error);
+    }
+  }, [jsonInput]);
+
   const handleViewModeChange = useCallback((mode: 'tree' | 'graph') => {
     setViewMode(mode);
   }, []);
@@ -149,6 +171,8 @@ export function JsonLayout() {
               onExpandAll={handleExpandAll}
               onCollapseAll={handleCollapseAll}
               onDownload={handleDownload}
+              onCopyFormatted={handleCopyFormatted}
+              onCopyMinified={handleCopyMinified}
               viewMode={viewMode}
               onViewModeChange={handleViewModeChange}
             />
@@ -182,6 +206,8 @@ export function JsonLayout() {
           onExpandAll={handleExpandAll}
           onCollapseAll={handleCollapseAll}
           onDownload={handleDownload}
+          onCopyFormatted={handleCopyFormatted}
+          onCopyMinified={handleCopyMinified}
           viewMode={viewMode}
           onViewModeChange={handleViewModeChange}
         />
