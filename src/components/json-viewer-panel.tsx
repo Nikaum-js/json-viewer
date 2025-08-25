@@ -143,8 +143,8 @@ export function JsonViewerPanel({
       </CardHeader>
       
       {/* JSON Viewer Panel Header with View Mode Buttons */}
-      <CardHeader className="flex flex-col md:flex-row md:items-center justify-between py-3 px-4 border-b border-border bg-muted/30 gap-3 md:gap-2">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
+      <CardHeader className="flex flex-col md:flex-row md:items-center justify-between py-3 px-3 lg:px-4 border-b border-border bg-muted/30 gap-3 md:gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
           <div className="flex items-center gap-2 min-w-0">
             <Search className="h-4 w-4 text-primary flex-shrink-0" />
             <h2 className="text-base md:text-lg font-semibold text-foreground truncate">{t('viewer.title')}</h2>
@@ -152,7 +152,7 @@ export function JsonViewerPanel({
           
           {/* View Mode Buttons */}
           <TooltipProvider>
-            <div className="hidden sm:flex items-center gap-1 border-l border-border pl-3">
+            <div className="hidden sm:flex items-center gap-1 border-l border-border pl-2 lg:pl-3">
               {VIEW_MODES.map((mode) => {
                 const IconComponent = mode.icon;
                 return (
@@ -162,11 +162,11 @@ export function JsonViewerPanel({
                         variant={activeMode === mode.id ? "default" : "ghost"}
                         size="sm"
                         onClick={() => handleModeChange(mode.id)}
-                        className="h-7 px-2 text-xs gap-1 transition-all duration-200"
+                        className="h-7 px-1.5 lg:px-2 text-xs gap-1 transition-all duration-200"
                         disabled={!data || (data as any).error}
                       >
                         <IconComponent className="h-3.5 w-3.5" />
-                        <span className="hidden xl:inline">{mode.label}</span>
+                        <span className="hidden 2xl:inline">{mode.label}</span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -182,7 +182,7 @@ export function JsonViewerPanel({
           </TooltipProvider>
         </div>
         
-        <div className="flex items-center gap-1 flex-shrink-0">
+        <div className="flex items-center gap-1 flex-shrink-0 overflow-hidden">
           {/* Tree-specific actions */}
           {activeMode === 'tree' && (
             <>
@@ -191,34 +191,34 @@ export function JsonViewerPanel({
                 size="sm" 
                 onClick={onExpandAll}
                 disabled={!data || (data as any).error}
-                className="text-xs gap-1 px-2"
+                className="text-xs gap-1 px-1.5 lg:px-2"
                 title={t('viewer.expandAll')}
               >
                 <Expand className="h-4 w-4" />
-                <span className="hidden xl:inline">{t('viewer.expandAll')}</span>
+                <span className="hidden 2xl:inline">{t('viewer.expandAll')}</span>
               </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={onCollapseAll}
                 disabled={!data || (data as any).error}
-                className="text-xs gap-1 px-2"
+                className="text-xs gap-1 px-1.5 lg:px-2"
                 title={t('viewer.collapseAll')}
               >
                 <Minimize className="h-4 w-4" />
-                <span className="hidden xl:inline">{t('viewer.collapseAll')}</span>
+                <span className="hidden 2xl:inline">{t('viewer.collapseAll')}</span>
               </Button>
             </>
           )}
           
-          {/* Copy actions dropdown - always visible until very large screens */}
+          {/* Copy actions dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="outline" 
                 size="sm" 
                 disabled={!data || (data as any).error}
-                className="text-xs gap-1 px-2"
+                className="text-xs gap-1 px-1.5 lg:px-2"
                 title="Copy Options"
               >
                 {copiedState ? (
@@ -226,7 +226,7 @@ export function JsonViewerPanel({
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
-                <span className="hidden lg:inline">{t('viewer.copy')}</span>
+                <span className="hidden xl:inline">{t('viewer.copy')}</span>
                 <ChevronDown className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
@@ -264,11 +264,11 @@ export function JsonViewerPanel({
             size="sm" 
             onClick={onDownload}
             disabled={!data || (data as any).error}
-            className="text-xs gap-1 px-2"
+            className="text-xs gap-1 px-1.5 lg:px-2"
             title="Download JSON"
           >
             <Download className="h-4 w-4" />
-            <span className="hidden lg:inline">Download</span>
+            <span className="hidden xl:inline">Download</span>
           </Button>
         </div>
       </CardHeader>
