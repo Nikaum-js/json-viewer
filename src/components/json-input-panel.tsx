@@ -84,28 +84,21 @@ export function JsonInputPanel({
         </div>
       </CardHeader>
       {/* JSON Input Panel Header */}
-      <CardHeader className="flex flex-row items-center justify-between py-3 px-8 border-b border-border bg-muted/30">
+      <CardHeader className="flex flex-col xl:flex-row xl:items-center justify-between py-3 px-4 lg:px-8 border-b border-border bg-muted/30 gap-3 xl:gap-0">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">{t('editor.title')}</h2>
+          <h2 className="text-base xl:text-lg font-semibold text-foreground">{t('editor.title')}</h2>
         </div>
         <div className="flex gap-1 md:gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={onLoadExample}
-            className="text-xs hidden sm:inline-flex"
-          >
-{t('editor.loadExample')}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onLoadExample}
-            className="sm:hidden"
+            className="text-xs gap-1"
             title={t('editor.loadExample')}
           >
             <FileText className="h-4 w-4" />
+            <span className="hidden xl:inline">{t('editor.loadExample')}</span>
           </Button>
           <Button
             variant="outline"
@@ -115,7 +108,7 @@ export function JsonInputPanel({
             title={t('editor.uploadFile')}
           >
             <Upload className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('editor.upload')}</span>
+            <span className="hidden xl:inline">{t('editor.upload')}</span>
           </Button>
           <Button
             variant="outline"
@@ -124,8 +117,8 @@ export function JsonInputPanel({
             className="text-xs gap-1"
             title={t('editor.pasteFromClipboard')}
           >
-            <Clipboard className="h-3 w-3" />
-            <span className="hidden sm:inline">{t('editor.paste')}</span>
+            <Clipboard className="h-4 w-4" />
+            <span className="hidden xl:inline">{t('editor.paste')}</span>
           </Button>
         </div>
       </CardHeader>
