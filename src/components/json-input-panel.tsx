@@ -45,7 +45,7 @@ export function JsonInputPanel({
     <Card className="h-full flex flex-col border-0 rounded-none bg-card">
       {/* Main Application Header - Integrated */}
       <CardHeader className="border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90">
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between py-2 gap-3 xl:gap-0">
+        <div className="flex flex-col min-[1280px]:flex-row min-[1280px]:items-center justify-between py-2 gap-3 min-[1280px]:gap-0">
           {/* Left side - Logo, Title and Subtitle */}
           <div className="flex items-center gap-3 md:gap-4">
             <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center">
