@@ -28,6 +28,7 @@
     "search": "Search keys and values...",
     "expandAll": "Expand All",
     "collapseAll": "Collapse All",
+    "copy": "Copy",
     "copyFormatted": "Copy Formatted",
     "copyMinified": "Copy Minified",
     "copyPath": "Copy Path",

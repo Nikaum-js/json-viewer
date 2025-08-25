@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useTranslation } from 'react-i18next';
 import {
   Braces,
   Brackets,
@@ -10,8 +10,8 @@ import {
   ChevronDown,
   ChevronRight,
   Circle,
-  Copy, 
-  Download, 
+  Copy,
+  Download,
   Expand,
   FileText,
   Hash,
@@ -20,11 +20,12 @@ import {
   MoreVertical,
   Network,
   Quote,
-  Search, 
+  Search,
   TreePine,
   X
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { JsonGraphView } from "./json-view-implementations";
 
 interface ViewMode {
@@ -181,7 +182,8 @@ export function JsonViewerPanel({
           </TooltipProvider>
         </div>
         
-        <div className="flex gap-1 md:gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
+          {/* Tree-specific actions */}
           {activeMode === 'tree' && (
             <>
               <Button 
@@ -193,7 +195,7 @@ export function JsonViewerPanel({
                 title={t('viewer.expandAll')}
               >
                 <Expand className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('viewer.expandAll')}</span>
+                <span className="hidden md:inline">{t('viewer.expandAll')}</span>
               </Button>
               <Button 
                 variant="outline" 
@@ -204,43 +206,93 @@ export function JsonViewerPanel({
                 title={t('viewer.collapseAll')}
               >
                 <Minimize className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('viewer.collapseAll')}</span>
+                <span className="hidden md:inline">{t('viewer.collapseAll')}</span>
               </Button>
             </>
           )}
           
-          {/* Copy buttons - available for both tree and graph modes */}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleCopyFormatted}
-            disabled={!data || (data as any).error || !onCopyFormatted}
-            className="text-xs gap-1 transition-colors"
-            title={t('viewer.copyFormatted')}
-          >
-            {copiedState === 'formatted' ? (
-              <Check className="h-4 w-4 text-green-500" />
-            ) : (
-              <FileText className="h-4 w-4" />
-            )}
-            <span className="hidden lg:inline">{t('viewer.copyFormatted')}</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleCopyMinified}
-            disabled={!data || (data as any).error || !onCopyMinified}
-            className="text-xs gap-1 transition-colors"
-            title={t('viewer.copyMinified')}
-          >
-            {copiedState === 'minified' ? (
-              <Check className="h-4 w-4 text-green-500" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-            <span className="hidden lg:inline">{t('viewer.copyMinified')}</span>
-          </Button>
+          {/* Copy actions - Desktop: individual buttons, Mobile: dropdown */}
+          <div className="hidden lg:flex gap-1">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleCopyFormatted}
+              disabled={!data || (data as any).error || !onCopyFormatted}
+              className="text-xs gap-1 transition-colors"
+              title={t('viewer.copyFormatted')}
+            >
+              {copiedState === 'formatted' ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <FileText className="h-4 w-4" />
+              )}
+              <span>{t('viewer.copyFormatted')}</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleCopyMinified}
+              disabled={!data || (data as any).error || !onCopyMinified}
+              className="text-xs gap-1 transition-colors"
+              title={t('viewer.copyMinified')}
+            >
+              {copiedState === 'minified' ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+              <span>{t('viewer.copyMinified')}</span>
+            </Button>
+          </div>
+
+          {/* Copy actions dropdown for mobile/tablet */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                disabled={!data || (data as any).error}
+                className="lg:hidden text-xs gap-1"
+                title="Copy Options"
+              >
+                {copiedState ? (
+                  <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+                <span className="hidden sm:inline">{t('viewer.copy')}</span>
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem 
+                onClick={handleCopyFormatted}
+                disabled={!onCopyFormatted}
+                className="gap-2"
+              >
+                {copiedState === 'formatted' ? (
+                  <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                  <FileText className="h-4 w-4" />
+                )}
+                {t('viewer.copyFormatted')}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleCopyMinified}
+                disabled={!onCopyMinified}
+                className="gap-2"
+              >
+                {copiedState === 'minified' ? (
+                  <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+                {t('viewer.copyMinified')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
+          {/* Download - always visible */}
           <Button 
             variant="outline" 
             size="sm" 

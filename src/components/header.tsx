@@ -1,5 +1,5 @@
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { Braces, Github } from "lucide-react";
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ export function Header() {
             </div>
             <div className="flex flex-col">
               <h1 className="text-xl font-bold text-foreground tracking-tight">
-                {t('header.title')}
+                {/* {t('header.title')} */}
               </h1>
               <p className="hidden text-sm text-muted-foreground sm:block font-medium">
                 {t('header.subtitle')}

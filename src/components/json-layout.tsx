@@ -1,8 +1,8 @@
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { useCallback, useMemo, useState } from "react";
 import { JsonInputPanel } from "./json-input-panel";
 import { JsonViewerPanel } from "./json-viewer-panel";
 import { MobileTabs } from "./mobile-tabs";
-import { useMediaQuery } from "@/hooks/use-media-query";
 
 export function JsonLayout() {
   const [jsonInput, setJsonInput] = useState('');

@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Braces, Clipboard, FileText, Github, Upload } from "lucide-react";
 import { useRef } from "react";
-import { ThemeSwitcher } from "./theme-switcher";
-import { LanguageSwitcher } from "./language-switcher";
 import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from "./language-switcher";
+import { ThemeSwitcher } from "./theme-switcher";
 
 interface JsonInputPanelProps {
   value: string;
